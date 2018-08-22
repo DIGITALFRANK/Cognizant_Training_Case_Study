@@ -151,6 +151,7 @@ public class CustomerDriver {
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("enter your customer's SSN");
 		int ssn = keyboard.nextInt();
+		// date validation => startDate[0] cannot be more than 3, startDate[3] can only be 1 or 2, if (startDate[4] == 2) startDate[0] cannot be more than 2
 		System.out.println("enter the beginning date in the format DD/MM/YYYY");
 		String startDate = keyboard.next();
 		System.out.println("enter the ending date in the format DD/MM/YYYY");
@@ -161,13 +162,15 @@ public class CustomerDriver {
 		
 		transactions = cDAO.getCustTransByDateRange(ssn, startDate, endDate);
 		
-		System.out.println("\tCOUNT\t DAY/MONTH/YEAR\t\t CREDIT_CARD_NO\t\t BRANCH CODE\t TRANSACTION TYPE\t TRANSACTION VALUE ($USD)\t CUSTUMER NAME\t ");
+		System.out.println("\tCOUNT\t DAY/MONTH/YEAR\t\t BRANCH CODE\t CREDIT_CARD_NO\t\t TRANSACTION TYPE\t TRANSACTION VALUE ($USD)\t CUSTUMER NAME\t ");
 		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
 		
 		String customer; 
 		int count = 1;
 		double total = 0;
 		for (Transaction transaction :transactions) {
+			String date = transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear();
+			// System.out.format("%10d%15s%20d%20s%30s10d20s", count, date, transaction.getBranchCode(), transaction.getCardNo(), transaction.getType(), transaction.getValue(), transaction.getCustName());
 			System.out.println("\t" + count + "\t|\t" + transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear() + "\t|\t" + transaction.getBranchCode() + "\t|\t" + transaction.getCardNo() + "\t|\t" + transaction.getType() + "\t|\t" + "$" + transaction.getValue() + "\t|\t" + transaction.getCustName() + "\t");  
 			System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
 			count++;
