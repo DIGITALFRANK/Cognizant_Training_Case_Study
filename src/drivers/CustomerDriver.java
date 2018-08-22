@@ -2,6 +2,7 @@ package drivers;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -177,6 +178,8 @@ public class CustomerDriver {
 			System.out.println("there are no recorded transactions during the period of " + startDate + " and " + endDate + " by " + customer + " (SSN: " + ssn + ")");
 		} else {
 			customer = transactions.get(0).getCustName(); 
+			DecimalFormat df = new DecimalFormat("#.##");      
+			total = Double.valueOf(df.format(total));
 			System.out.println("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + startDate + " and " + endDate + " amount to " + total);
 			// System.out.println("yo yo");
 		}

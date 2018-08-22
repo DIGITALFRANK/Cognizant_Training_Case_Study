@@ -126,12 +126,12 @@ public class CustomerDAO extends dbconnection_abstract {
 				String[] splitEndDate = endDate.split("/");
 				
 				prepStmt = connection.prepareStatement(myQueries.custTransactionsBetween);
-				prepStmt.setInt(1, Integer.parseInt(splitStartDate[2])); // to Int?
-				prepStmt.setInt(2, Integer.parseInt(splitStartDate[1])); // to Int?
-				prepStmt.setInt(3, Integer.parseInt(splitStartDate[0])); // to Int?
-				prepStmt.setInt(4, Integer.parseInt(splitEndDate[2])); // to Int?
-				prepStmt.setInt(5, Integer.parseInt(splitEndDate[1])); // to Int?
-				prepStmt.setInt(6, Integer.parseInt(splitEndDate[0])); // to Int?
+				prepStmt.setInt(1, Integer.parseInt(splitStartDate[2])); 
+				prepStmt.setInt(2, Integer.parseInt(splitStartDate[1]));
+				prepStmt.setInt(3, Integer.parseInt(splitStartDate[0])); 
+				prepStmt.setInt(4, Integer.parseInt(splitEndDate[2])); 
+				prepStmt.setInt(5, Integer.parseInt(splitEndDate[1]));
+				prepStmt.setInt(6, Integer.parseInt(splitEndDate[0]));
 				prepStmt.setInt(7, ssn);
 				resultSet = prepStmt.executeQuery();
 				
