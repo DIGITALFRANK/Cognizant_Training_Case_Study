@@ -1,0 +1,47 @@
+
+// 2.2.2 Data Loading with Hive
+// Utilize Hive to create tables in the Hadoop Filesystem and then load the Credit Card System data extracted via Sqoop into those tables.
+// Data Engineers will need to transform the data based on requirements found in the Mapping Document.
+
+
+
+
+// A. create external table CDW_SAPP_D_BRANCH, partioned by branch state 
+
+CREATE EXTERNAL TABLE CDW_SAPP_D_BRANCH (
+    BRANCH_CODE NUMBER(9);
+    BRANCH_NAME VARCHAR2(25),
+    BRANCH_STREET VARCHAR2(30),
+    BRANCH_CITY VARCHAR2(30),
+    BRANCH_ZIP NUMBER(7),
+    BRANCH_PHONE VARCHAR2(13),
+    LAST_UPDATED TIMESTAMP(0)
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+PARTITIONED BY (BRANCH_STATE VARCHAR2(30))
+LOCATION '/user/maria_dev/Credit_Card_System/CDW_SAPP_BRANCH';
+
+
+
+
+
+// B. create external table CDW_SAPP_F_CREDIT_CARD, partioned by branch, by customer credit card number, and by transaction type 
+
+CREATE EXTERNAL TABLE CDW_SAPP_F_CREDIT_CARD, (
+    TRANSACTION_ID NUMBER(9),
+    TIMEID VARCHAR2(8),
+    CUST_SSN NUMBER(9),
+    TRANSACTION_VALUE DECIMAL(20, 3)
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+PARTITIONED BY (CUST_CC_NO STRING(16), BRANCH_CODE NUMBER(10), TRANSACTION_TYPE VARCHAR2(30))
+LOCATION '/user/maria_dev/Credit_Card_System/CDW_SAPP_CREDIT_CARD';
+
+
+
+
+
+
+
+
+
