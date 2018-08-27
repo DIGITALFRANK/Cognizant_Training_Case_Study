@@ -4,6 +4,10 @@
 // Utilize Sqoop to extract Credit Card System data according to the specifications found in the mapping document:
 
 
+
+
+
+// ////// WE ARE NO LONGER DOING THIS / Sqoop creates the directories for you when you specify target-dir
 // A - set up external tables file structure where we will Sqoop data from RDBMS to be partitioned and loaded into Hive
 
 // 1. in File View, navigate to /user/maria_dev (or whatever user you may chose to use) and create a new directory "Credit_Card_System"
@@ -12,13 +16,13 @@
 // 		CDW_SAPP_CREDICARD
 // 		CDW_SAPP_TIME
 // 		CDW_SAPP_CUSTOMER
+// ////// WE ARE NO LONGER DOING THIS / Sqoop creates the directory for you when you specify target-dir
 
 
 
 
 
-
-// B - Sqoop data from RDBMS to the respective target directories in Hadoop according to Mapping Document
+// A - Set up MySQL configuration to use Sqoop on RDBMS
 
 $ mysql -u root -p		// log into MySQL on Putty (Sandbox cli)
 $ password		// type in the password for root user 
@@ -27,6 +31,13 @@ mysql> use CDW_SAPP;		// select the database we'll use
 mysql> show tables;		// you can show tables, but don't you already know them by this point!?
 mysql> grant all privileges on CDW_SAPP.* to ''@'localhost';		// grant all privileges so we can do work between HDFS and this database
 
+
+
+
+
+
+
+// B - Sqoop data from RDBMS to the respective target directories in Hadoop according to Mapping Document
 
 // 1. Sqoop data for CDW_SAPP_BRANCH
 
