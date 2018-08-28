@@ -19,18 +19,54 @@ public class TransactionDriver {
 	// functional requirement 1
 	public static void getTransactionsByZipCode() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, SQLException {
 		Scanner keyboard = new Scanner(System.in);
-		System.out.println("Enter a five digit zipcode:");
+		System.out.println("enter a five digit zipcode:");
 		int zip = keyboard.nextInt();
-		// enter the month and year (MM/YYYY) 
-		// String mMYYY = keyboard.next();
-		// arr monthYear = mMYYY.split("/")
-		// int month = monthYear[0].toInt
-		// int year = monthYear[1].toInt
-		System.out.println("Enter a four digit year:");
-		int year = keyboard.nextInt();
+		
+		// input validation
+		for (int i = 0; i < String.valueOf(zip).length(); i++) {
+			if (Character.getNumericValue(String.valueOf(zip).charAt(i)) > 9 ) {
+				System.out.println("please enter a valid 5-digit zipcode");
+				zip = keyboard.nextInt();
+			}
+		}
+		if (String.valueOf(zip).length() != 5) {
+			System.out.println("your zip code is either too long or too short\nenter a five digit zipcode:");
+			zip = keyboard.nextInt();
+		}
+		
+		System.out.println("enter the month and year (MM/YYYY)"); 
+		String mmyyyy = keyboard.next();
+		
+		// input validation
+		for (int i = 0; i < mmyyyy.length(); i++) {
+			if (i==2) {
+				continue;
+			}
+			if (Character.getNumericValue(mmyyyy.charAt(i)) > 9 ) {
+				System.out.println("please enter a valid month and year\nre-enter the month and year (MM/YYYY)");
+				mmyyyy = keyboard.next();
+			}
+		}
+		if (Character.toString(mmyyyy.charAt(2)) != "/" || mmyyyy.length() != 7) {
+			System.out.println("please enter the month and year in the correct format\nre-enter the month and year (MM/YYYY)");
+			mmyyyy = keyboard.next();
+		}
+		if (Character.getNumericValue(mmyyyy.charAt(0)) > 1 || Character.getNumericValue(mmyyyy.charAt(0)) == 1 && Character.getNumericValue(mmyyyy.charAt(1)) > 2) {
+			System.out.println("please enter a valid month [1-12]\nre-enter the month and year (MM/YYYY)");
+			mmyyyy = keyboard.next();
+		}
+		
+		
+		String[] monthYear = mmyyyy.split("/");
+		int month = Integer.parseInt(monthYear[0]);
+		int year = Integer.parseInt(monthYear[1]);
+		
+		
+		// System.out.println("Enter a four digit year:");
+		// int year = keyboard.nextInt();
 		// if (month[0] == 0) singleDigitMonth == month[1].toInt  
-		System.out.println("Enter a two digit month:");
-		int month = keyboard.nextInt();
+		// System.out.println("Enter a two digit month:");
+		// int month = keyboard.nextInt();
 		
 		TransactionDAO tDAO = new TransactionDAO();
 		ArrayList<Transaction> transactions = tDAO.getTransactionsByZipCode(zip, year, month);
