@@ -8,32 +8,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import com.mysql.cj.conf.ConnectionUrl.Type;
+// import com.mysql.cj.conf.ConnectionUrl.Type;
 
 import data_access_objects.TransactionDAO;
-import data_access_objects.dbconnection_abstract;
+// import data_access_objects.dbconnection_abstract;
 import models.Transaction;
-import resources.myQueries;
+// import resources.myQueries;
 
 public class TransactionDriver {
 	// functional requirement 1
 	public static void getTransactionsByZipCode() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, SQLException {
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("enter a five digit zipcode:");
-		int zip = keyboard.nextInt();
-		
+		// int zip = keyboard.nextInt();    
+		String zipString = String.valueOf(keyboard.nextInt()); // for validation purposes 
 		// input validation
-		for (int i = 0; i < String.valueOf(zip).length(); i++) {
-			if (Character.getNumericValue(String.valueOf(zip).charAt(i)) > 9 ) {
+		for (int i = 0; i < zipString.length(); i++) {
+			if (Character.getNumericValue(zipString.charAt(i)) > 9 ) {
 				System.out.println("please enter a valid 5-digit zipcode");
-				zip = keyboard.nextInt();
+				zipString = String.valueOf(keyboard.nextInt());
 			}
 		}
-		if (String.valueOf(zip).length() != 5) {
+		while (zipString.length() != 5) {
 			System.out.println("your zip code is either too long or too short\nenter a five digit zipcode:");
-			zip = keyboard.nextInt();
+			zipString = String.valueOf(keyboard.nextInt());
 		}
 		
+		int zip = Integer.parseInt(zipString);
 		System.out.println("enter the month and year (MM/YYYY)"); 
 		String mmyyyy = keyboard.next();
 		
@@ -47,7 +48,7 @@ public class TransactionDriver {
 				mmyyyy = keyboard.next();
 			}
 		}
-		if (Character.toString(mmyyyy.charAt(2)) != "/" || mmyyyy.length() != 7) {
+		if (!Character.toString(mmyyyy.charAt(2)).equals("/") || mmyyyy.length() != 7) {
 			System.out.println("please enter the month and year in the correct format\nre-enter the month and year (MM/YYYY)");
 			mmyyyy = keyboard.next();
 		}
