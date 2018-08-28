@@ -1,5 +1,7 @@
 package drivers;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -147,14 +149,14 @@ public class CustomerDriver {
 	}
 	
 	// functional requirement 4
-	public static void getCustTransByDateRange() {
+	public static void getCustTransByDateRange() throws IOException {
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("enter your customer's SSN");
 		int ssn = keyboard.nextInt();
 		// date validation => startDate[0] cannot be more than 3, startDate[3] can only be 1 or 2, if (startDate[4] == 2) startDate[0] cannot be more than 2
-		System.out.println("enter the beginning date in the format DD/MM/YYYY");
+		System.out.println("enter beginning date (DD/MM/YYYY)");
 		String startDate = keyboard.next();
-		System.out.println("enter the ending date in the format DD/MM/YYYY");
+		System.out.println("enter ending date (DD/MM/YYYY)");
 		String endDate = keyboard.next();
 		
 		CustomerDAO cDAO = new CustomerDAO();
@@ -184,7 +186,34 @@ public class CustomerDriver {
 			DecimalFormat df = new DecimalFormat("#.##");      
 			total = Double.valueOf(df.format(total));
 			System.out.println("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + startDate + " and " + endDate + " amount to " + total);
-			// System.out.println("yo yo");
+			
+			System.out.println("\n\n\nwould you like to output these transaction details to a csv file? (Y/N)");
+			String answer = keyboard.next();
+			if (answer == "Y") {
+				System.out.println("generating file...");
+				try {
+					// File file = new File("C:\\Users\\Students\\Desktop\\transactionDetails.csv");
+					File file = new File("/users/frankie/desktop/transactionDetails.csv");
+					file.createNewFile();
+						System.out.println("YOooooooo! the file was created");
+					FileWriter writer = new FileWriter(file); 
+					
+					for (Transaction transaction :transactions) {
+						int trCount = 0;
+						String date = transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear();
+						writer.write(trCount + "," + date + "," + transaction.getBranchCode() + "," + transaction.getCardNo() + "," + transaction.getType() + "," + "$" + transaction.getValue() + "," + transaction.getCustName() + "\n");  
+						trCount++;
+					}
+					
+					writer.write("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + startDate + " and " + endDate + " amount to " + total + "\n\n\n");
+					writer.flush();
+					writer.close();
+						System.out.println("yuuuurrrr we just wrote some stuff to the file");
+					System.out.println("the file (\"transactionDetails.csv\") was outputted to your desktop");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		count = 1;
 		System.out.println("\n\n\n");
