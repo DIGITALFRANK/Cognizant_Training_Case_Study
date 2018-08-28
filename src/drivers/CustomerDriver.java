@@ -187,28 +187,25 @@ public class CustomerDriver {
 			total = Double.valueOf(df.format(total));
 			System.out.println("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + startDate + " and " + endDate + " amount to " + total);
 			
-			System.out.println("\n\n\nwould you like to output these transaction details to a csv file? (Y/N)");
-			String answer = keyboard.next();
-			if (answer == "Y") {
+			System.out.println("\n\n\nwould you like to output these transaction details to a csv file? (y/N)");
+			String answer = keyboard.next().toLowerCase();
+			if (answer.equals("y")) {
 				System.out.println("generating file...");
 				try {
 					// File file = new File("C:\\Users\\Students\\Desktop\\transactionDetails.csv");
-					File file = new File("/users/frankie/desktop/transactionDetails.csv");
+					File file = new File("/users/frankie/desktop/transactionDetails2.csv");
 					file.createNewFile();
-						System.out.println("YOooooooo! the file was created");
 					FileWriter writer = new FileWriter(file); 
 					
+					int trCount = 1;
 					for (Transaction transaction :transactions) {
-						int trCount = 0;
-						String date = transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear();
-						writer.write(trCount + "," + date + "," + transaction.getBranchCode() + "," + transaction.getCardNo() + "," + transaction.getType() + "," + "$" + transaction.getValue() + "," + transaction.getCustName() + "\n");  
-						trCount++;
+						writer.write(trCount + "," + transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear() + "," + transaction.getBranchCode() + "," + transaction.getCardNo() + "," + transaction.getType() + "," + "$" + transaction.getValue() + "," + transaction.getCustName() + "\n");  
+						trCount+=1 ;
 					}
 					
 					writer.write("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + startDate + " and " + endDate + " amount to " + total + "\n\n\n");
 					writer.flush();
 					writer.close();
-						System.out.println("yuuuurrrr we just wrote some stuff to the file");
 					System.out.println("the file (\"transactionDetails.csv\") was outputted to your desktop");
 				} catch (Exception e) {
 					e.printStackTrace();
