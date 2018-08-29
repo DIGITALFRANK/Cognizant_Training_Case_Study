@@ -149,10 +149,32 @@ public class CustomerDriver {
 	}
 	
 	// functional requirement 4
+	public static void validateSsnDigitInput(String ssnString, Scanner keyboard) {
+		for (int i = 0; i < ssnString.length(); i++) {
+			if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
+				System.out.println("please enter a valid 9-digit social security number");
+				ssnString = String.valueOf(keyboard.next());
+				validateSsnDigitInput(ssnString, keyboard);
+			}
+		}
+		while (ssnString.length() != 9) {
+			System.out.println("your ssn is either too long or too short\nenter a 9-digit social security number");
+			ssnString = String.valueOf(keyboard.next());
+			validateSsnDigitInput(ssnString, keyboard);
+		}
+	}
+	
 	public static void getCustTransByDateRange() throws IOException {
 		Scanner keyboard = new Scanner(System.in);
-		System.out.println("enter your customer's SSN");
-		int ssn = keyboard.nextInt();
+		System.out.println("enter your customer's SSN");		
+		String ssnString = String.valueOf(keyboard.next()); // for validation purposes 
+		
+		validateSsnDigitInput(ssnString, keyboard);
+		int ssn = Integer.parseInt(ssnString);
+		
+		
+		
+		
 		// date validation => startDate[0] cannot be more than 3, startDate[3] can only be 1 or 2, if (startDate[4] == 2) startDate[0] cannot be more than 2
 		System.out.println("enter beginning date (DD/MM/YYYY)");
 		String startDate = keyboard.next();

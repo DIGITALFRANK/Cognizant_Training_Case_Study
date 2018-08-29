@@ -21,17 +21,17 @@ public class TransactionDriver {
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("enter a five digit zipcode:");
 		// int zip = keyboard.nextInt();    
-		String zipString = String.valueOf(keyboard.nextInt()); // for validation purposes 
+		String zipString = String.valueOf(keyboard.next()); // for validation purposes 
 		// input validation
 		for (int i = 0; i < zipString.length(); i++) {
-			if (Character.getNumericValue(zipString.charAt(i)) > 9 ) {
+			while (Character.getNumericValue(zipString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
 				System.out.println("please enter a valid 5-digit zipcode");
 				zipString = String.valueOf(keyboard.nextInt());
 			}
 		}
 		while (zipString.length() != 5) {
 			System.out.println("your zip code is either too long or too short\nenter a five digit zipcode:");
-			zipString = String.valueOf(keyboard.nextInt());
+			zipString = String.valueOf(keyboard.next());
 		}
 		
 		int zip = Integer.parseInt(zipString);
