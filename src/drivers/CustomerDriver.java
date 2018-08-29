@@ -149,19 +149,21 @@ public class CustomerDriver {
 	}
 	
 	// functional requirement 4
-	public static void validateSsnDigitInput(String ssnString, Scanner keyboard) {
+	public static String validateSsnDigitInput(String ssnString, Scanner keyboard) {
 		for (int i = 0; i < ssnString.length(); i++) {
 			if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
-				System.out.println("please enter a valid 9-digit social security number");
-				ssnString = String.valueOf(keyboard.next());
+				System.out.println("=> please enter a valid 9-digit social security number");
+				ssnString = String.valueOf(keyboard.nextLine());
 				validateSsnDigitInput(ssnString, keyboard);
 			}
 		}
-		while (ssnString.length() != 9) {
-			System.out.println("your ssn is either too long or too short\nenter a 9-digit social security number");
-			ssnString = String.valueOf(keyboard.next());
+		if (ssnString.length() != 9) {
+			System.out.println("your ssn is either too long or too short\n=> enter a 9-digit social security number");
+			ssnString = String.valueOf(keyboard.nextLine());
+			System.out.println("the length of ssnString is " + ssnString.length());
 			validateSsnDigitInput(ssnString, keyboard);
 		}
+		return ssnString;
 	}
 	
 	public static void getCustTransByDateRange() throws IOException {
@@ -169,8 +171,8 @@ public class CustomerDriver {
 		System.out.println("enter your customer's SSN");		
 		String ssnString = String.valueOf(keyboard.next()); // for validation purposes 
 		
-		validateSsnDigitInput(ssnString, keyboard);
-		int ssn = Integer.parseInt(ssnString);
+		System.out.println("the length of ssnString is " + ssnString.length());
+		int ssn = Integer.parseInt(validateSsnDigitInput(ssnString, keyboard));
 		
 		
 		

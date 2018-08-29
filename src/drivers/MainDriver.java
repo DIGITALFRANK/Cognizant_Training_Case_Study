@@ -27,7 +27,7 @@ public class MainDriver {
 			
 			int option = keyboard.nextInt();
 			
-			// full user input validations for each case & ESC keystroke to return here / refactor all code for DRYness
+			// full user input validations for each case & ESC keystroke to return here / refactor all code for DRYness / re-usable functions please
 			try {
 				switch (option) {
 				case 1:
