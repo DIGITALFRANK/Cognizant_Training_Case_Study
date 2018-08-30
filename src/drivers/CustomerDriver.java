@@ -5,10 +5,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import data_access_objects.CustomerDAO;
 import models.Customer;
@@ -30,6 +33,10 @@ public class CustomerDriver {
 							"\n\nlast updated: " + custDetails.getLastUpdated() +
 							"\n\n--------------------------------------------------------------------" );
 	}
+	
+	
+	
+	
 
 	// functional requirement 1
 	public static void getCustomerDetails() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, SQLException {		
@@ -41,17 +48,20 @@ public class CustomerDriver {
 		custDetails = cDAO.getCustomerDetails(ssn);
 		System.out.println("here are the account details of your customer (ssn:" + ssn + ")");
 		printCustDetails();
-		System.out.println("\n\n\n");
-		System.out.println("__________________________________________________________________________________________________");
+		System.out.println("\n\n\n__________________________________________________________________________________________________");
 		System.out.println("------------------------------------------ WELCOME BACK ------------------------------------------\n");
 	}
+	
+	
+	
+	
 	
 	// functional requirement 2
 	static String[] fields = {"first_name", "middle_name", "last_name", "credit_card_no", "street_name", "apt_no", "cust_city", "cust_state", "cust_zip", "cust_country", "cust_phone", "cust_email"};		
 	public static void printFieldOptions() {
 		System.out.println("\nYOU CAN UPDATE ANY OF THE FOLLOWING FIELDS.  PLEASE CHOOSE ONE:\n");
 		for (String field :fields) {
-			System.out.println("> " + field);
+			System.out.println("=> " + field);
 		}
 		// add this to every program (get ESC key code => if (keyboard.next() == ESCkeyCode) { MainDriver.main() } )
 		System.out.println("\npress ESC to go back  ");
@@ -81,31 +91,31 @@ public class CustomerDriver {
 		
 		switch (field) {
 			case "cust_phone":
-				System.out.println("enter the updated value");
+				System.out.println("=> enter the updated value");
 				int valueInt = keyboard.nextInt();
 				CustomerDAO cDAO = new CustomerDAO();
 				Customer updatedDetails = cDAO.updateCustomerPhone(field, valueInt, ssn);
-				// updatedDetails.setLastUpdated(now);
 				custDetails = updatedDetails;
 				System.out.println("\nHERE ARE THE updated ACCOUNT DETAILS OF YOUR CUSTOMER (ssn:" + ssn + ")");
 				printCustDetails();
 				break;
 			default:
-				System.out.println("enter the updated value");
+				System.out.println("=> enter the updated value");
 				String valueStr = keyboard.next();
 				CustomerDAO custDAO = new CustomerDAO();
 				Customer detailsUpdate = custDAO.updateCustomerDetails(field, valueStr, ssn);
-				// detailsUpdate.setLastUpdated(now);
 				custDetails = detailsUpdate;
 				System.out.println("\nHERE ARE THE updated ACCOUNT DETAILS OF YOUR CUSTOMER (ssn:" + ssn + ")");
 				printCustDetails();
 				break;
 		}
-		// customer.setTimestamp(now)
-		System.out.println("\n\n\n");
-		System.out.println("__________________________________________________________________________________________________");
+		System.out.println("\n\n\n__________________________________________________________________________________________________");
 		System.out.println("------------------------------------------ WELCOME BACK ------------------------------------------\n");
 	}
+	
+	
+	
+	
 	
 	// functional requirement 3
 	public static void getMonthlyBill() {
@@ -140,47 +150,92 @@ public class CustomerDriver {
 				System.out.println("\nthe total bill for the month of " + month + "/" + year + " for credit card no." + cc + " is " + total);
 			}
 			count = 1;
-			System.out.println("\n\n\n");
-			System.out.println("__________________________________________________________________________________________________");
+			System.out.println("\n\n\n__________________________________________________________________________________________________");
 			System.out.println("------------------------------------------ WELCOME BACK ------------------------------------------\n");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 	}
 	
+	
+	
+	
+	
+//	public static String validateSsnDigitInput(String ssnString, Scanner keyboard) {
+//		for (int i = 0; i < ssnString.length(); i++) {
+//			if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
+//				System.out.println("=> please enter a valid 9-digit social security number");
+//				ssnString = String.valueOf(keyboard.next());
+//				validateSsnDigitInput(ssnString, keyboard);
+//			}
+//		}
+//		
+//		if (ssnString.length() == 9) {
+//			return ssnString;
+//		} else if (ssnString.length() < 9) {
+//			System.out.println("your ssn number is too short\n=> enter a 9-digit social security number");
+//			ssnString = String.valueOf(keyboard.next());
+//			System.out.println("the length of ssnString is " + ssnString.length());
+//			validateSsnDigitInput(ssnString, keyboard);
+//		} else if (ssnString.length() > 9) {
+//			System.out.println("your ssn number is too long\n=> enter a 9-digit social security number");
+//			ssnString = String.valueOf(keyboard.next());
+//			System.out.println("the length of ssnString is " + ssnString.length());
+//			validateSsnDigitInput(ssnString, keyboard);
+//		} 
+//		return ssnString;
+//	}
+	
+	
 	// functional requirement 4
-	public static String validateSsnDigitInput(String ssnString, Scanner keyboard) {
+	public static String checkSsnAllInt(String ssnString, Scanner keyboard) {
 		for (int i = 0; i < ssnString.length(); i++) {
 			if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
 				System.out.println("=> please enter a valid 9-digit social security number");
-				ssnString = String.valueOf(keyboard.nextLine());
-				validateSsnDigitInput(ssnString, keyboard);
+				ssnString = String.valueOf(keyboard.next());
+				checkSsnAllInt(ssnString, keyboard);
 			}
 		}
-		if (ssnString.length() != 9) {
-			System.out.println("your ssn is either too long or too short\n=> enter a 9-digit social security number");
-			ssnString = String.valueOf(keyboard.nextLine());
+		return checkSsnLength(ssnString, keyboard);
+	}
+	
+	public static String checkSsnLength(String ssnString, Scanner keyboard) {
+		if (ssnString.length() == 9) {
+			return ssnString;
+		} else if (ssnString.length() < 9) {
+			System.out.println("your ssn number is too short\n=> enter a 9-digit social security number");
 			System.out.println("the length of ssnString is " + ssnString.length());
-			validateSsnDigitInput(ssnString, keyboard);
-		}
+
+			ssnString = String.valueOf(keyboard.next());
+			//System.out.println("the length of ssnString is " + ssnString.length());
+			checkSsnAllInt(ssnString, keyboard);
+		} else if (ssnString.length() > 9) {
+			System.out.println("your ssn number is too long\n=> enter a 9-digit social security number");
+			System.out.println("the length of ssnString is " + ssnString.length());
+
+			ssnString = String.valueOf(keyboard.next());
+			//System.out.println("the length of ssnString is " + ssnString.length());
+			checkSsnAllInt(ssnString, keyboard);
+		} 
 		return ssnString;
 	}
 	
+	
 	public static void getCustTransByDateRange() throws IOException {
 		Scanner keyboard = new Scanner(System.in);
-		System.out.println("enter your customer's SSN");		
+		System.out.println("=> enter your customer's SSN");		
 		String ssnString = String.valueOf(keyboard.next()); // for validation purposes 
 		
 		System.out.println("the length of ssnString is " + ssnString.length());
-		int ssn = Integer.parseInt(validateSsnDigitInput(ssnString, keyboard));
+		int ssn = Integer.parseInt(checkSsnAllInt(ssnString, keyboard));
 		
 		
 		
 		
 		// date validation => startDate[0] cannot be more than 3, startDate[3] can only be 1 or 2, if (startDate[4] == 2) startDate[0] cannot be more than 2
-		System.out.println("enter beginning date (DD/MM/YYYY)");
+		System.out.println("=> enter beginning date (DD/MM/YYYY)");
 		String startDate = keyboard.next();
-		System.out.println("enter ending date (DD/MM/YYYY)");
+		System.out.println("=> enter ending date (DD/MM/YYYY)");
 		String endDate = keyboard.next();
 		
 		CustomerDAO cDAO = new CustomerDAO();
@@ -213,6 +268,11 @@ public class CustomerDriver {
 			
 			System.out.println("\n\n\nwould you like to output these transaction details to a csv file? (y/N)");
 			String answer = keyboard.next().toLowerCase();
+			// answer input validation
+			while (!answer.equals("y") || !answer.equals("n")) {
+				System.out.println("please enter \"y\" for Yes or \"N\" for No");
+				answer = keyboard.next().toLowerCase();
+			}
 			if (answer.equals("y")) {
 				System.out.println("generating file...");
 				try {
@@ -237,12 +297,43 @@ public class CustomerDriver {
 			}
 		}
 		count = 1;
-		System.out.println("\n\n\n");
-		System.out.println("__________________________________________________________________________________________________");
+		System.out.println("\n\n\n__________________________________________________________________________________________________");
 		System.out.println("------------------------------------------ WELCOME BACK ------------------------------------------\n");
 	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
