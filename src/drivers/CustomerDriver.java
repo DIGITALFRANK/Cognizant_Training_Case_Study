@@ -37,6 +37,9 @@ public class CustomerDriver {
 	
 	
 	
+	
+	
+	
 
 	// functional requirement 1
 	public static void getCustomerDetails() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, SQLException {		
@@ -51,6 +54,9 @@ public class CustomerDriver {
 		System.out.println("\n\n\n__________________________________________________________________________________________________");
 		System.out.println("------------------------------------------ WELCOME BACK ------------------------------------------\n");
 	}
+	
+	
+	
 	
 	
 	
@@ -117,6 +123,9 @@ public class CustomerDriver {
 	
 	
 	
+	
+	
+	
 	// functional requirement 3
 	public static void getMonthlyBill() {
 		Scanner keyboard = new Scanner(System.in);
@@ -160,74 +169,18 @@ public class CustomerDriver {
 	
 	
 	
+
 	
-//	public static String validateSsnDigitInput(String ssnString, Scanner keyboard) {
-//		for (int i = 0; i < ssnString.length(); i++) {
-//			if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
-//				System.out.println("=> please enter a valid 9-digit social security number");
-//				ssnString = String.valueOf(keyboard.next());
-//				validateSsnDigitInput(ssnString, keyboard);
-//			}
-//		}
-//		
-//		if (ssnString.length() == 9) {
-//			return ssnString;
-//		} else if (ssnString.length() < 9) {
-//			System.out.println("your ssn number is too short\n=> enter a 9-digit social security number");
-//			ssnString = String.valueOf(keyboard.next());
-//			System.out.println("the length of ssnString is " + ssnString.length());
-//			validateSsnDigitInput(ssnString, keyboard);
-//		} else if (ssnString.length() > 9) {
-//			System.out.println("your ssn number is too long\n=> enter a 9-digit social security number");
-//			ssnString = String.valueOf(keyboard.next());
-//			System.out.println("the length of ssnString is " + ssnString.length());
-//			validateSsnDigitInput(ssnString, keyboard);
-//		} 
-//		return ssnString;
-//	}
 	
 	
 	// functional requirement 4
-	public static String checkSsnAllInt(String ssnString, Scanner keyboard) {
-		for (int i = 0; i < ssnString.length(); i++) {
-			if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
-				System.out.println("=> please enter a valid 9-digit social security number");
-				ssnString = String.valueOf(keyboard.next());
-				checkSsnAllInt(ssnString, keyboard);
-			}
-		}
-		return checkSsnLength(ssnString, keyboard);
-	}
-	
-	public static String checkSsnLength(String ssnString, Scanner keyboard) {
-		if (ssnString.length() == 9) {
-			return ssnString;
-		} else if (ssnString.length() < 9) {
-			System.out.println("your ssn number is too short\n=> enter a 9-digit social security number");
-			System.out.println("the length of ssnString is " + ssnString.length());
-
-			ssnString = String.valueOf(keyboard.next());
-			//System.out.println("the length of ssnString is " + ssnString.length());
-			checkSsnAllInt(ssnString, keyboard);
-		} else if (ssnString.length() > 9) {
-			System.out.println("your ssn number is too long\n=> enter a 9-digit social security number");
-			System.out.println("the length of ssnString is " + ssnString.length());
-
-			ssnString = String.valueOf(keyboard.next());
-			//System.out.println("the length of ssnString is " + ssnString.length());
-			checkSsnAllInt(ssnString, keyboard);
-		} 
-		return ssnString;
-	}
-	
-	
 	public static void getCustTransByDateRange() throws IOException {
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("=> enter your customer's SSN");		
 		String ssnString = String.valueOf(keyboard.next()); // for validation purposes 
 		
 		System.out.println("the length of ssnString is " + ssnString.length());
-		int ssn = Integer.parseInt(checkSsnAllInt(ssnString, keyboard));
+		int ssn = Integer.parseInt(ssnInputValidation(ssnString, keyboard));
 		
 		
 		
@@ -269,10 +222,15 @@ public class CustomerDriver {
 			System.out.println("\n\n\nwould you like to output these transaction details to a csv file? (y/N)");
 			String answer = keyboard.next().toLowerCase();
 			// answer input validation
-			while (!answer.equals("y") || !answer.equals("n")) {
+			boolean validAnswer = false;
+			if (answer.equals("y") || answer.equals("n")) {
+				validAnswer = true;
+			}
+			while (validAnswer == false) {
 				System.out.println("please enter \"y\" for Yes or \"N\" for No");
 				answer = keyboard.next().toLowerCase();
 			}
+			// output file do Desktop if user wants
 			if (answer.equals("y")) {
 				System.out.println("generating file...");
 				try {
@@ -290,7 +248,7 @@ public class CustomerDriver {
 					writer.write("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + startDate + " and " + endDate + " amount to " + total + "\n\n\n");
 					writer.flush();
 					writer.close();
-					System.out.println("the file (\"transactionDetails.csv\") was outputted to your desktop");
+					System.out.println("the file (\"transactionDetails.csv\") was sent to your desktop");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -301,31 +259,42 @@ public class CustomerDriver {
 		System.out.println("------------------------------------------ WELCOME BACK ------------------------------------------\n");
 	}
 	
+	
+	// ssn input validation function
+	public static String ssnInputValidation(String ssnString, Scanner keyboard) {
+		boolean validSSN = false;
+		while (validSSN == false) {
+			// no letters
+			for (int i = 0; i < ssnString.length(); i++) {
+				if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
+					System.out.println("=> please enter a valid 9-digit social security number");
+					ssnString = String.valueOf(keyboard.next());
+				}
+			}
+			
+			while (ssnString.length() != 9) {
+				if (ssnString.length() < 9) {
+					System.out.println("your ssn number is too short\n=> enter a 9-digit social security number");	
+					ssnString = String.valueOf(keyboard.next());
+				} else if (ssnString.length() > 9) {
+					System.out.println("your ssn number is too long\n=> enter a 9-digit social security number");	
+					ssnString = String.valueOf(keyboard.next());
+				} 
+				
+				// no letters
+				for (int i = 0; i < ssnString.length(); i++) {
+					if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
+						System.out.println("=> please enter a valid 9-digit social security number");
+						ssnString = String.valueOf(keyboard.next());
+					}
+				}
+			}
+			validSSN = true;
+		}
+		return ssnString;
+	}
+	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

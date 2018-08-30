@@ -3,7 +3,7 @@ package resources;
 public class myQueries {
 	public static String field;
 	// functional requirement 1
-	public final static String transactionsByZipCode = "select distinct TRANSACTION_TYPE, round(TRANSACTION_VALUE, 2) '$ Amount', day, month, year, CREDIT_CARD_NO, CUST_SSN, BRANCH_CODE " +
+	public final static String transactionsByZipCode = "select TRANSACTION_TYPE, round(TRANSACTION_VALUE, 2), LPAD(day, 2, '0'), LPAD(month, 2, '0'), year, CREDIT_CARD_NO, CUST_SSN, BRANCH_CODE " +
 			"from CDW_SAPP_CREDITCARD join CDW_SAPP_CUSTOMER using(Credit_Card_No)" +
 			"where CUST_ZIP = ? and YEAR = ? and MONTH = ? " +
 			"order by day";

@@ -13,61 +13,24 @@ import java.util.Scanner;
 import data_access_objects.TransactionDAO;
 // import data_access_objects.dbconnection_abstract;
 import models.Transaction;
-// import resources.myQueries;
+
+
+
 
 public class TransactionDriver {
+	
 	// functional requirement 1
 	public static void getTransactionsByZipCode() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, SQLException {
 		Scanner keyboard = new Scanner(System.in);
-		System.out.println("enter a five digit zipcode:");
-		// int zip = keyboard.nextInt();    
+		System.out.println("=> enter a five digit zipcode:");
 		String zipString = String.valueOf(keyboard.next()); // for validation purposes 
-		// input validation
-		for (int i = 0; i < zipString.length(); i++) {
-			while (Character.getNumericValue(zipString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
-				System.out.println("please enter a valid 5-digit zipcode");
-				zipString = String.valueOf(keyboard.nextInt());
-			}
-		}
-		while (zipString.length() != 5) {
-			System.out.println("your zip code is either too long or too short\nenter a five digit zipcode:");
-			zipString = String.valueOf(keyboard.next());
-		}
+		int zip = Integer.parseInt(zipCodeInputValidation(zipString, keyboard));
 		
-		int zip = Integer.parseInt(zipString);
-		System.out.println("enter the month and year (MM/YYYY)"); 
+		System.out.println("=> enter the month and year (MM/YYYY)"); 
 		String mmyyyy = keyboard.next();
-		
-		// input validation
-		for (int i = 0; i < mmyyyy.length(); i++) {
-			if (i==2) {
-				continue;
-			}
-			if (Character.getNumericValue(mmyyyy.charAt(i)) > 9 ) {
-				System.out.println("please enter a valid month and year\nre-enter the month and year (MM/YYYY)");
-				mmyyyy = keyboard.next();
-			}
-		}
-		if (!Character.toString(mmyyyy.charAt(2)).equals("/") || mmyyyy.length() != 7) {
-			System.out.println("please enter the month and year in the correct format\nre-enter the month and year (MM/YYYY)");
-			mmyyyy = keyboard.next();
-		}
-		if (Character.getNumericValue(mmyyyy.charAt(0)) > 1 || Character.getNumericValue(mmyyyy.charAt(0)) == 1 && Character.getNumericValue(mmyyyy.charAt(1)) > 2) {
-			System.out.println("please enter a valid month [1-12]\nre-enter the month and year (MM/YYYY)");
-			mmyyyy = keyboard.next();
-		}
-		
-		
-		String[] monthYear = mmyyyy.split("/");
+		String[] monthYear = validateMonthYear(mmyyyy, keyboard).split("/");
 		int month = Integer.parseInt(monthYear[0]);
 		int year = Integer.parseInt(monthYear[1]);
-		
-		
-		// System.out.println("Enter a four digit year:");
-		// int year = keyboard.nextInt();
-		// if (month[0] == 0) singleDigitMonth == month[1].toInt  
-		// System.out.println("Enter a two digit month:");
-		// int month = keyboard.nextInt();
 		
 		TransactionDAO tDAO = new TransactionDAO();
 		ArrayList<Transaction> transactions = tDAO.getTransactionsByZipCode(zip, year, month);
@@ -88,6 +51,73 @@ public class TransactionDriver {
 		System.out.println("__________________________________________________________________________________________________");
 		System.out.println("------------------------------------------ WELCOME BACK ------------------------------------------\n");
 	}
+	
+	// zipcode input validation function
+	public static String zipCodeInputValidation(String zipString, Scanner keyboard) {
+		boolean validZip = false;
+		while (validZip == false) {
+			//no letters
+			for (int i = 0; i < zipString.length(); i++) {
+				if (Character.getNumericValue(zipString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
+					System.out.println("=> please enter a valid 5-digit zipcode");
+					zipString = String.valueOf(keyboard.next());
+				}
+			}
+			
+			while (zipString.length() != 5) {
+				System.out.println("=> please enter a valid 5-digit zipcode:");
+				zipString = String.valueOf(keyboard.next());
+				//no letters
+				for (int i = 0; i < zipString.length(); i++) {
+					if (Character.getNumericValue(zipString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
+						System.out.println("=> please enter a valid 5-digit zipcode");
+						zipString = String.valueOf(keyboard.next());
+					}
+				}
+			}
+			validZip = true;
+		}
+		return zipString;
+	}
+	
+	// month and year input validation
+	public static String validateMonthYear(String mmyyyy, Scanner keyboard) {
+		boolean validMonthYear = false;
+		while (validMonthYear == false) {
+			// no letters
+			for (int i = 0; i < mmyyyy.length(); i++) {
+				if (i==2) {
+					continue;
+				}
+				if (Character.getNumericValue(mmyyyy.charAt(i)) > 9 ) {
+					System.out.println("please enter a valid month and year (MM/YYYY)");
+					mmyyyy = keyboard.next();
+				}
+			}
+			
+			while (mmyyyy.length() != 7 || mmyyyy.charAt(2) != '/' || Character.getNumericValue(mmyyyy.charAt(0)) > 1 || Character.getNumericValue(mmyyyy.charAt(0)) == 1 && Character.getNumericValue(mmyyyy.charAt(1)) > 2) {
+				System.out.println("enter a valid Month and Year, strictly adhere to the format MM/YYYY");
+				mmyyyy = keyboard.next();
+				
+				// no letters
+				for (int i = 0; i < mmyyyy.length(); i++) {
+					if (i==2) {
+						continue;
+					}
+					if (Character.getNumericValue(mmyyyy.charAt(i)) > 9 ) {
+						System.out.println("please enter a valid month and year (MM/YYYY)");
+						mmyyyy = keyboard.next();
+					}
+				}
+			}
+			validMonthYear = true;
+		}
+		return mmyyyy;	
+	}
+	
+	
+	
+	
 	
 	
 	// functional requirement 2
@@ -123,6 +153,11 @@ public class TransactionDriver {
 		System.out.println("__________________________________________________________________________________________________");
 		System.out.println("------------------------------------------ WELCOME BACK ------------------------------------------\n");
 	}
+	
+	
+	
+	
+	
 	
 	
 	// functional requirement 3
