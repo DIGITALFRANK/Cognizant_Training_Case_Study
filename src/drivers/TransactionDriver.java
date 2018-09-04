@@ -137,13 +137,13 @@ public class TransactionDriver {
 		printTransTypeOptions();
 		
 		Scanner keyboard = new Scanner(System.in);
-		String type = keyboard.nextLine(); // find a way to run this w/o being case-sensitive
+		String type = keyboard.nextLine(); // find a way to run this w/o being case-sensitive   // .toLowerCase() duh!!
 		
 		List<String> choiceList = Arrays.asList(transTypes);
-		while (!choiceList.contains(type)) {	
+		while (!choiceList.contains(type)) {	// make sure you can check regardless of capitalization or case
 			System.out.println("\n\n**************\nplease enter a valid choice... (capitalization matters)\n**************\n");
 			printTransTypeOptions();
-			type = keyboard.nextLine();
+			type = keyboard.next();
 		}
 				
 		TransactionDAO tDAO = new TransactionDAO();
