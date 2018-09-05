@@ -1,4 +1,11 @@
 
+<!-- 2.2 Functional Requirements – ETL of Data -->
+<!-- 2.2.3 Workflow Automation with Oozie -->
+<!-- Create a Oozie workflow that will automate Sqoop data Loading and Hive table creation -->
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
 <workflow-app xmlns = "uri:oozie:workflow:0.2" name = "copy data from external to orc">
     <start to="sqoop-node"/>  
 
@@ -9,19 +16,17 @@
             <prepare>
                 <delete path="${nameNode}/user/maria_dev/Credit_Card_System"/>
             </prepare>
- 
             <configuration>
                 <property>
                     <name>mapred.job.queue.name</name>
                     <value>${queueName}</value> <!-- queue name is default and is defined in job properties -->
                 </property>
             </configuration>
-            <command>
-                job --exec branch_import
-                job --exec credit_card_import
-                job --exec customer_import
-                job --exec time_import
-            </command>  <!-- get data from MySQL RDBMS using Sqoop and store data at /user/maria_dev/Credit_Card_System --> 
+            <command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec branch_import</command>
+            <command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec credit_card_import</command>
+            <command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec time_import</command>
+            <command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec customer_import</command>
+            <!-- get data from MySQL RDBMS using Sqoop and store data at /user/maria_dev/Credit_Card_System --> 
         </sqoop>
         <ok to="hive-node-branch"/>    <!-- if everything is ok then start Hive nodes --> 
         <error to="sqoop-fail"/>
@@ -94,12 +99,12 @@
 
 
 
+<!-- RUN THIS JOB FROM PUTTY OR SANDBOX CLI USING THE FOLLOWING COMMAND => make sure to place the job.properties file in the Linux VM documents folder  -->
+<!-- $ oozie job   -oozie  http://localhost:11000/oozie  -config  /documents/job.properties  -run -->
 
 
-
-
-
-
+<!-- MONITOR OOZIE JOB FROM OOZIE WEB CONSOLE -->
+<!-- => navigate to your IP address :11000/oozie/        // 192.168.109.129:11000/oozie/ -->
 
 
 
