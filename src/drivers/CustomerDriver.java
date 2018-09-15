@@ -5,22 +5,24 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.time.Year;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import data_access_objects.CustomerDAO;
 import models.Customer;
 import models.Transaction;
+import resources.inputValidators;
 
 
 
 public class CustomerDriver {
+	
+	
+	
 	public static Customer custDetails;
+	
+	// print customer details function
 	public static void printCustDetails() {
 		System.out.println("\n--------------------------------------------------------------------" +
 							"\n\n" + custDetails.getFirstName() + " "  + custDetails.getLastName() +
@@ -43,14 +45,11 @@ public class CustomerDriver {
 
 	// functional requirement 1
 	public static void getCustomerDetails() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, SQLException {		
-		System.out.println("enter your customers SSN");
+		System.out.println("=> enter your customer's social security numver");
 		Scanner keyboard = new Scanner(System.in);
 		String ssnString = keyboard.next();
-		
-		
-		
-		// validation use #4's ssn validation code => maybe here you can just call that function
-		ssnInputValidation(ssnString, keyboard);
+				
+		inputValidators.ssnInputValidator(ssnString, keyboard);
 		int ssn = Integer.parseInt(ssnString);
 		
 		CustomerDAO cDAO = new CustomerDAO();
@@ -69,7 +68,7 @@ public class CustomerDriver {
 	
 	
 	// functional requirement 2
-	static String[] fields = {"first_name", "middle_name", "last_name", "credit_card_no", "street_name", "apt_no", "cust_city", "cust_state", "cust_zip", "cust_country", "cust_phone", "cust_email"};		
+	public static String[] fields = {"first_name", "middle_name", "last_name", "credit_card_no", "street_name", "apt_no", "cust_city", "cust_state", "cust_zip", "cust_country", "cust_phone", "cust_email"};		
 	public static void printFieldOptions() {
 		System.out.println("\nYOU CAN UPDATE ANY OF THE FOLLOWING FIELDS.  PLEASE CHOOSE ONE:\n");
 		for (String field :fields) {
@@ -86,7 +85,7 @@ public class CustomerDriver {
 		
 		
 		// validation use #4's ssn validation code => maybe here you can just call that function
-		ssnInputValidation(ssnString, keyboard);
+		inputValidators.ssnInputValidator(ssnString, keyboard);
 		int ssn = Integer.parseInt(ssnString);
 		
 		CustomerDAO customer = new CustomerDAO();
@@ -96,14 +95,7 @@ public class CustomerDriver {
 		
 		printFieldOptions();
 		String field = keyboard.next();
-		
-		// user input validation
-		List<String> fieldList = Arrays.asList(fields);
-		while (!fieldList.contains(field)) {	
-			System.out.println("\n\n**************\nplease enter a valid choice... (all lowercase)\n**************\n");
-			printFieldOptions();
-			field = keyboard.next();
-		}
+		inputValidators.fieldInputValidator(field, keyboard);
 		
 		
 		switch (field) {
@@ -153,10 +145,11 @@ public class CustomerDriver {
 		
 		System.out.println("enter the credit card number (no spaces or dashes)");
 		String cc = keyboard.next();
-		
-		
-		
 		// validation length == 16 && no letters or special characters  => use question 4's code 
+		inputValidators.ccInputValidator(cc, keyboard);
+		
+		
+		
 		
 		
 		
@@ -181,7 +174,7 @@ public class CustomerDriver {
 			if (count == 1) {
 				System.out.println("there are no recorded transactions during the month of " + month + "/" + year + " by credit card no. " + cc);
 			} else {
-				System.out.println("\nthe total bill for the month of " + month + "/" + year + " for credit card no." + cc + " is " + total);
+				System.out.println("\nthe total bill for the month of " + month + "/" + year + " on credit card no. " + cc + " is $" + total);
 			}
 			count = 1;
 			System.out.println("\n\n\n__________________________________________________________________________________________________");
@@ -203,17 +196,13 @@ public class CustomerDriver {
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("=> enter your customer's SSN");		
 		String ssnString = String.valueOf(keyboard.next()); // for validation purposes 
-		
-		System.out.println("the length of ssnString is " + ssnString.length());
-		int ssn = Integer.parseInt(ssnInputValidation(ssnString, keyboard));
-		
-		
-		
-		
+		int ssn = Integer.parseInt(inputValidators.ssnInputValidator(ssnString, keyboard));
 		System.out.println("=> enter beginning date (DD/MM/YYYY)");
 		String startDate = keyboard.next();
+		inputValidators.fullDateInputValidator(startDate, keyboard);
 		System.out.println("=> enter ending date (DD/MM/YYYY)");
 		String endDate = keyboard.next();
+		inputValidators.fullDateInputValidator(endDate, keyboard);
 		
 		
 
@@ -234,7 +223,7 @@ public class CustomerDriver {
 		int count = 1;
 		double total = 0;
 		for (Transaction transaction :transactions) {
-			String date = transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear();
+			// String date = transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear();
 			// System.out.format("%10d%15s%20d%20s%30s10d20s", count, date, transaction.getBranchCode(), transaction.getCardNo(), transaction.getType(), transaction.getValue(), transaction.getCustName());
 			System.out.println("\t" + count + "\t|\t" + transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear() + "\t|\t" + transaction.getBranchCode() + "\t|\t" + transaction.getCardNo() + "\t|\t" + transaction.getType() + "\t|\t" + "$" + transaction.getValue() + "\t|\t" + transaction.getCustName() + "\t");  
 			System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -252,15 +241,9 @@ public class CustomerDriver {
 			
 			System.out.println("\n\n\nwould you like to output these transaction details to a csv file? (y/N)");
 			String answer = keyboard.next().toLowerCase();
-			// answer input validation
-			boolean validAnswer = false;
-			if (answer.equals("y") || answer.equals("n")) {
-				validAnswer = true;
-			}
-			while (validAnswer == false) {
-				System.out.println("please enter \"y\" for Yes or \"N\" for No");
-				answer = keyboard.next().toLowerCase();
-			}
+			inputValidators.yesNoAnswerValidator(answer, keyboard);
+			
+			
 			// output file do Desktop if user wants
 			if (answer.equals("y")) {
 				System.out.println("generating file...");
@@ -279,72 +262,24 @@ public class CustomerDriver {
 					writer.write("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + startDate + " and " + endDate + " amount to " + total + "\n\n\n");
 					writer.flush();
 					writer.close();
-					System.out.println("the file (\"transactionDetails.csv\") was sent to your desktop");
+					System.out.println("the file (\"transactionDetails.csv\") is now located at your desktop");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
 		count = 1;
+		total = 0;
 		System.out.println("\n\n\n__________________________________________________________________________________________________");
 		System.out.println("------------------------------------------ WELCOME BACK ------------------------------------------\n");
 	}
 	
 	
-	// ssn input validation function
-	public static String ssnInputValidation(String ssnString, Scanner keyboard) {
-		boolean validSSN = false;
-		while (validSSN == false) {
-			// no letters or special characters
-			validateNoLetters(ssnString, keyboard);
-//			for (int i = 0; i < ssnString.length(); i++) {
-//				if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
-//					System.out.println("=> please enter a valid 9-digit social security number");
-//					ssnString = String.valueOf(keyboard.next());
-//				}
-//			}
-//			
-			while (ssnString.length() != 9) {
-				if (ssnString.length() < 9) {
-					System.out.println("your ssn number is too short\n=> enter a 9-digit social security number");	
-					ssnString = String.valueOf(keyboard.next());
-				} else if (ssnString.length() > 9) {
-					System.out.println("your ssn number is too long\n=> enter a 9-digit social security number");	
-					ssnString = String.valueOf(keyboard.next());
-				} 
-				
-				// no letters or special characters
-				validateNoLetters(ssnString, keyboard);
-//				for (int i = 0; i < ssnString.length(); i++) {
-//					if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
-//						System.out.println("=> please enter a valid 9-digit social security number");
-//						ssnString = String.valueOf(keyboard.next());
-//					}
-//				}
-			}
-			validSSN = true;
-		}
-		return ssnString;
-	}
-	
-	
-	// no letters or special characters in SSN
-	public static void validateNoLetters(String ssnString, Scanner keyboard) {
-		for (int i = 0; i < ssnString.length(); i++) {
-			if (Character.getNumericValue(ssnString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
-				System.out.println("=> please enter a valid 9-digit social security number");
-				ssnString = String.valueOf(keyboard.next());
-			}
-		}
-	}
-	
 }
-
-
-
-
-
-
+	
+	
+	
+	
 
 
 
