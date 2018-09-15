@@ -25,7 +25,20 @@ public class MainDriver {
 			System.out.println("(7) => Display the transactions made by a distinct customer between 2 distinct dates\n");
 			System.out.println("(8) => Exit\n\n");
 			
-			int option = keyboard.nextInt();
+			
+			
+			
+			String userInput = keyboard.next();
+			
+			while (userInput.length() > 1 || Character.getNumericValue(userInput.charAt(0)) > 9) {
+				System.out.println("=> please enter a valid option");
+				userInput = keyboard.next();
+			}
+			
+			int option = Integer.parseInt(userInput);
+			
+			
+			
 			
 			// full user input validations for each case & ESC keystroke to return here / refactor all code for DRYness / re-usable functions please
 			try {
@@ -55,10 +68,10 @@ public class MainDriver {
 				case 8:
 					System.out.println("exiting...");
 					active = false;
-					System.out.println("Thank you for using the system.");
+					System.out.println("thank you for using the system.");
 					break;
 				default:
-					System.out.println("Please enter a valid option");
+					System.out.println("=> please enter a valid option/n/n");
 					break;
 				}
 			} catch (Exception e) {

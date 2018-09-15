@@ -1,18 +1,19 @@
 package drivers;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-// import com.mysql.cj.conf.ConnectionUrl.Type;
 
 import data_access_objects.TransactionDAO;
-// import data_access_objects.dbconnection_abstract;
 import models.Transaction;
+import resources.inputValidators;
+
+
 
 
 
@@ -24,11 +25,12 @@ public class TransactionDriver {
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("=> enter a five digit zipcode:");
 		String zipString = String.valueOf(keyboard.next()); // for validation purposes 
-		int zip = Integer.parseInt(zipCodeInputValidation(zipString, keyboard));
+		int zip = Integer.parseInt(inputValidators.zipCodeInputValidator(zipString, keyboard));
 		
 		System.out.println("=> enter the month and year (MM/YYYY)"); 
 		String mmyyyy = keyboard.next();
-		String[] monthYear = validateMonthYear(mmyyyy, keyboard).split("/");
+		String[] monthYear = inputValidators.monthYearInputValidator(mmyyyy, keyboard).split("/");
+
 		int month = Integer.parseInt(monthYear[0]);
 		int year = Integer.parseInt(monthYear[1]);
 		
@@ -51,69 +53,7 @@ public class TransactionDriver {
 		System.out.println("__________________________________________________________________________________________________");
 		System.out.println("------------------------------------------ WELCOME BACK ------------------------------------------\n");
 	}
-	
-	// zipcode input validation function
-	public static String zipCodeInputValidation(String zipString, Scanner keyboard) {
-		boolean validZip = false;
-		while (validZip == false) {
-			//no letters
-			for (int i = 0; i < zipString.length(); i++) {
-				if (Character.getNumericValue(zipString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
-					System.out.println("=> please enter a valid 5-digit zipcode");
-					zipString = String.valueOf(keyboard.next());
-				}
-			}
-			
-			while (zipString.length() != 5) {
-				System.out.println("=> please enter a valid 5-digit zipcode:");
-				zipString = String.valueOf(keyboard.next());
-				//no letters
-				for (int i = 0; i < zipString.length(); i++) {
-					if (Character.getNumericValue(zipString.charAt(i)) > 9 ) {		// integer input validation using numeric character code
-						System.out.println("=> please enter a valid 5-digit zipcode");
-						zipString = String.valueOf(keyboard.next());
-					}
-				}
-			}
-			validZip = true;
-		}
-		return zipString;
-	}
-	
-	// month and year input validation
-	public static String validateMonthYear(String mmyyyy, Scanner keyboard) {
-		boolean validMonthYear = false;
-		while (validMonthYear == false) {
-			// no letters
-			for (int i = 0; i < mmyyyy.length(); i++) {
-				if (i==2) {
-					continue;
-				}
-				if (Character.getNumericValue(mmyyyy.charAt(i)) > 9 ) {
-					System.out.println("please enter a valid month and year (MM/YYYY)");
-					mmyyyy = keyboard.next();
-				}
-			}
-			
-			while (mmyyyy.length() != 7 || mmyyyy.charAt(2) != '/' || Character.getNumericValue(mmyyyy.charAt(0)) > 1 || Character.getNumericValue(mmyyyy.charAt(0)) == 1 && Character.getNumericValue(mmyyyy.charAt(1)) > 2) {
-				System.out.println("enter a valid Month and Year, strictly adhere to the format MM/YYYY");
-				mmyyyy = keyboard.next();
-				
-				// no letters
-				for (int i = 0; i < mmyyyy.length(); i++) {
-					if (i==2) {
-						continue;
-					}
-					if (Character.getNumericValue(mmyyyy.charAt(i)) > 9 ) {
-						System.out.println("please enter a valid month and year (MM/YYYY)");
-						mmyyyy = keyboard.next();
-					}
-				}
-			}
-			validMonthYear = true;
-		}
-		return mmyyyy;	
-	}
+
 	
 	
 	
