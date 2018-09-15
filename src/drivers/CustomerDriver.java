@@ -132,27 +132,25 @@ public class CustomerDriver {
 	// functional requirement 3
 	public static void getMonthlyBill() {
 		Scanner keyboard = new Scanner(System.in);
-		System.out.println("enter a two digit month");
-		int month = keyboard.nextInt();
-		System.out.println("enter a four digit year");
-		int year = keyboard.nextInt();
+//		System.out.println("enter a two digit month");
+//		int month = keyboard.nextInt();
+//		System.out.println("enter a four digit year");
+//		int year = keyboard.nextInt();
 		
 		
 		
-		// validation => take month and year same way as transactions requirement 1 => use that code for validation
-		
-		
+		System.out.println("=> please enter the month and year (MM/YYYY)"); 
+		String mmyyyy = keyboard.next();
+		// validate month and year input 
+		String[] monthYear = inputValidators.monthYearInputValidator(mmyyyy, keyboard).split("/");
+		int month = Integer.parseInt(monthYear[0]);
+		int year = Integer.parseInt(monthYear[1]);
+			
 		
 		System.out.println("enter the credit card number (no spaces or dashes)");
-		String cc = keyboard.next();
-		// validation length == 16 && no letters or special characters  => use question 4's code 
-		inputValidators.ccInputValidator(cc, keyboard);
-		
-		
-		
-		
-		
-		
+		// validate credit card number input
+		String cc = inputValidators.ccInputValidator(keyboard.next(), keyboard);
+	
 		
 		CustomerDAO cDAO = new CustomerDAO();
 		ArrayList<Transaction> transactions;
