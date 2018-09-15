@@ -5,13 +5,28 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import models.Customer;
+import resources.inputValidators;
 
 public class MainDriver {
-	static Scanner keyboard = new Scanner(System.in);
+	
 	
 	public static void main(String[] args) {
+		Scanner keyboard = new Scanner(System.in);
 		System.out.println("\n\n*******  WELCOME TO YOUR CDW_SAPP DATA DASHBOARD  *******");
 		System.out.println("*********************************************************\n\n");
+		
+		// escape keypress stuff
+//		while (true) {
+//			if ((int)arg0.getKeyChar() == 27) {
+//				startProgram();
+//			}
+//			
+//			if (tmp.getKeyChar().equals('\b')) {
+//				
+//			}
+//		}
+		
+		
 		
 		boolean active = true;
 		while (active) {
@@ -29,18 +44,12 @@ public class MainDriver {
 			
 			
 			String userInput = keyboard.next();
-			
-			while (userInput.length() > 1 || Character.getNumericValue(userInput.charAt(0)) > 9) {
-				System.out.println("=> please enter a valid option");
-				userInput = keyboard.next();
-			}
-			
-			int option = Integer.parseInt(userInput);
+			int option = Integer.parseInt(inputValidators.programOptionValidator(userInput, keyboard));
 			
 			
 			
 			
-			// full user input validations for each case & ESC keystroke to return here / refactor all code for DRYness / re-usable functions please
+			// full user input validations for each case & ESC keystroke to return here / refactor DRY code / re-usable functions please
 			try {
 				switch (option) {
 				case 1:
