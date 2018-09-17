@@ -123,9 +123,7 @@ public class CustomerDAO extends dbconnection_abstract {
 				System.out.println("connection successful.\n\n");
 				
 				String[] splitStartDate = startDate.split("/");
-				System.out.println(splitStartDate[0] + "-" + splitStartDate[1] + "-" + splitStartDate[2]); // I'm checking
 				String[] splitEndDate = endDate.split("/");
-				System.out.println(splitEndDate[0] + "-" + splitEndDate[1] + "-" + splitEndDate[2]); // I'm checking
 				
 				prepStmt = connection.prepareStatement(myQueries.custTransactionsBetween);
 				prepStmt.setInt(1, Integer.parseInt(splitStartDate[1])); // these are in this order because I changed my mind about the input date format

@@ -22,12 +22,13 @@ public class inputValidators {
 	// y/N answer input validator 
 	public static void yesNoAnswerValidator(String answer, Scanner keyboard) {
 		boolean validAnswer = false;
-		if (answer.equals("y") || answer.equals("n")) {
-			validAnswer = true;
-		}
 		while (validAnswer == false) {
-			System.out.println("please enter \"y\" for Yes or \"N\" for No");
+			System.out.println("=> enter \"y\" for Yes or \"N\" for No");
 			answer = keyboard.next().toLowerCase();
+			
+			if (answer.equals("y") || answer.equals("n")) {
+				validAnswer = true;
+			}
 		}
 	}
 	

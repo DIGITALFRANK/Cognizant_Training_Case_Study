@@ -207,17 +207,18 @@ public class CustomerDriver {
 		
 		transactions = cDAO.getCustTransByDateRange(ssn, mmddyyyyStart, mmddyyyyEnd);
 		
-		System.out.println("\tCOUNT\t DAY/MONTH/YEAR\t\t BRANCH CODE\t CREDIT_CARD_NO\t\t TRANSACTION TYPE\t TRANSACTION VALUE ($USD)\t CUSTUMER NAME\t ");
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
+		// System.out.println("\tCOUNT\t DAY/MONTH/YEAR\t\t BRANCH CODE\t CREDIT_CARD_NO\t\t TRANSACTION TYPE\t TRANSACTION VALUE ($USD)\t CUSTUMER NAME\t ");
+		System.out.format("%-5s | %-20s | %-12s | %-20s | %-20s | %-12s | %-20s\n", "COUNT", "DATE (mm/dd/yyyy)", "BRANCH CODE", "CREDIT_CARD_NO", "TRANSACTION TYPE", "VALUE ($USD)", "CUSTUMER NAME");
+		System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 		
 		String customer; 
 		int count = 1;
 		double total = 0;
 		for (Transaction transaction :transactions) {
-			// String date = transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear();
-			// System.out.format("%10d%15s%20d%20s%30s10d20s", count, date, transaction.getBranchCode(), transaction.getCardNo(), transaction.getType(), transaction.getValue(), transaction.getCustName());
-			System.out.println("\t" + count + "\t|\t" + transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear() + "\t|\t" + transaction.getBranchCode() + "\t|\t" + transaction.getCardNo() + "\t|\t" + transaction.getType() + "\t|\t" + "$" + transaction.getValue() + "\t|\t" + transaction.getCustName() + "\t");  
-			System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
+			String date = transaction.getMonth() + "/" + transaction.getDay() + "/" + transaction.getYear();
+			System.out.format("%-5s | %-20s | %-12s | %-20s | %-20s | %-12s | %-20s\n", count, date, transaction.getBranchCode(), transaction.getCardNo(), transaction.getType(), transaction.getValue(), transaction.getCustName());
+			// System.out.println("\t" + count + "\t|\t" + transaction.getMonth() + "/" + transaction.getDay() + "/" + transaction.getYear() + "\t|\t" + transaction.getBranchCode() + "\t|\t" + transaction.getCardNo() + "\t|\t" + transaction.getType() + "\t|\t" + "$" + transaction.getValue() + "\t|\t" + transaction.getCustName() + "\t");  
+			System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 			count++;
 			total+=transaction.getValue();
 		}
@@ -230,7 +231,7 @@ public class CustomerDriver {
 			total = Double.valueOf(df.format(total));
 			System.out.println("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + mmddyyyyStart + " and " + mmddyyyyEnd + " amount to $" + total);
 			
-			System.out.println("\n\n\nwould you like to output these transaction details to a csv file? (y/N)");
+			System.out.println("\n\n\n=> would you like to output these transaction details to a csv file? (y/N)");
 			String answer = keyboard.next().toLowerCase();
 			inputValidators.yesNoAnswerValidator(answer, keyboard);
 			
