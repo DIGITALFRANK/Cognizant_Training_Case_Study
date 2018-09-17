@@ -99,8 +99,38 @@ public class inputValidators {
 	
 	
 	// full date input validator
-	public static void fullDateInputValidator(String mmddyyyy, Scanner keyboard) {
-		// code similar to ssn validator
+	public static String fullDateInputValidator(String mmddyyyy, Scanner keyboard) {
+		boolean validFullDate = false;
+		while (validFullDate == false) {
+			// no letters
+			for (int i = 0; i < mmddyyyy.length(); i++) {
+				if (i==2 || i==5) {
+					continue;
+				}
+				if (Character.getNumericValue(mmddyyyy.charAt(i)) > 9 ) {
+					System.out.println("=> enter a valid date (MM/DD/YYYY)");
+					mmddyyyy = keyboard.next();
+				}
+			}
+			
+			while (mmddyyyy.length() != 10 || mmddyyyy.charAt(2) != '/' && mmddyyyy.charAt(5) != '/' || Character.getNumericValue(mmddyyyy.charAt(0)) > 1 || Character.getNumericValue(mmddyyyy.charAt(0)) == 1 && Character.getNumericValue(mmddyyyy.charAt(1)) > 2 || Character.getNumericValue(mmddyyyy.charAt(3)) > 3 || Character.getNumericValue(mmddyyyy.charAt(3)) == 3 && Character.getNumericValue(mmddyyyy.charAt(4)) > 1) {		
+				System.out.println("=> enter a valid date, strictly adhere to the format MM/DD/YYYY");
+				mmddyyyy = keyboard.next();
+				
+				// no letters
+				for (int i = 0; i < mmddyyyy.length(); i++) {
+					if (i==2 || i==5) {
+						continue;
+					}
+					if (Character.getNumericValue(mmddyyyy.charAt(i)) > 9 ) {
+						System.out.println("=> enter a valid date (MM/DD/YYYY)");
+						mmddyyyy = keyboard.next();
+					}
+				}
+			}
+			validFullDate = true;
+		}
+		return mmddyyyy;	
 	}
 	
 		
@@ -120,7 +150,7 @@ public class inputValidators {
 				}
 			}
 			
-			while (mmyyyy.length() != 7 || mmyyyy.charAt(2) != '/' || Character.getNumericValue(mmyyyy.charAt(0)) > 1 || Character.getNumericValue(mmyyyy.charAt(0)) == 1 && Character.getNumericValue(mmyyyy.charAt(1)) > 2) {
+			while (mmyyyy.length() != 7 || mmyyyy.charAt(2) != '/' || Character.getNumericValue(mmyyyy.charAt(0)) > 1 || Character.getNumericValue(mmyyyy.charAt(0)) == 1 && Character.getNumericValue(mmyyyy.charAt(1)) > 2 || Character.getNumericValue(mmyyyy.charAt(3)) > 2) {
 				System.out.println("=> enter a valid Month and Year, strictly adhere to the format MM/YYYY");
 				mmyyyy = keyboard.next();
 				
@@ -140,20 +170,7 @@ public class inputValidators {
 		return mmyyyy;	
 	}
 	
-	
-	
-	
-//	public static void monthInputValidator(String month, Scanner keyboard) {
-//		// code similar to ssn validator
-//	}
-//	
-//	
-//	
-//	public static void yearInputValidator(String year, Scanner keyboard) {
-//		// code similar to ssn validator
-//	}
-	
-	
+		
 	
 
 	// zipcode input validation function
