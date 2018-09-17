@@ -195,24 +195,17 @@ public class CustomerDriver {
 		System.out.println("=> enter your customer's SSN");		
 		String ssnString = String.valueOf(keyboard.next()); // for validation purposes 
 		int ssn = Integer.parseInt(inputValidators.ssnInputValidator(ssnString, keyboard));
-		System.out.println("=> enter beginning date (DD/MM/YYYY)");
-		String startDate = keyboard.next();
-		inputValidators.fullDateInputValidator(startDate, keyboard);
-		System.out.println("=> enter ending date (DD/MM/YYYY)");
-		String endDate = keyboard.next();
-		inputValidators.fullDateInputValidator(endDate, keyboard);
+		System.out.println("=> enter beginning date (MM/DD/YYYY)");
+		String mmddyyyyStart = inputValidators.fullDateInputValidator(keyboard.next(), keyboard);
+		System.out.println("=> enter ending date (MM/DD/YYYY)");
+		String mmddyyyyEnd = inputValidators.fullDateInputValidator(keyboard.next(), keyboard);
 		
-		
-
-		// date validation => startDate[0] cannot be more than 3, startDate[3] can only be 1 or 2, if (startDate[4] == 2) startDate[0] cannot be more than 2
-		// use transaction requirement 1 code for validation
-		
-		
+				
 		
 		CustomerDAO cDAO = new CustomerDAO();
 		ArrayList<Transaction> transactions;
 		
-		transactions = cDAO.getCustTransByDateRange(ssn, startDate, endDate);
+		transactions = cDAO.getCustTransByDateRange(ssn, mmddyyyyStart, mmddyyyyEnd);
 		
 		System.out.println("\tCOUNT\t DAY/MONTH/YEAR\t\t BRANCH CODE\t CREDIT_CARD_NO\t\t TRANSACTION TYPE\t TRANSACTION VALUE ($USD)\t CUSTUMER NAME\t ");
 		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
@@ -230,12 +223,12 @@ public class CustomerDriver {
 		}
 		if (count == 1) {
 			customer = "your customer";
-			System.out.println("there are no recorded transactions during the period of " + startDate + " and " + endDate + " by " + customer + " (SSN: " + ssn + ")");
+			System.out.println("there are no recorded transactions during the period of " + mmddyyyyStart + " and " + mmddyyyyEnd + " by " + customer + " (SSN: " + ssn + ")");
 		} else {
 			customer = transactions.get(0).getCustName(); 
 			DecimalFormat df = new DecimalFormat("#.##");      
 			total = Double.valueOf(df.format(total));
-			System.out.println("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + startDate + " and " + endDate + " amount to " + total);
+			System.out.println("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + mmddyyyyStart + " and " + mmddyyyyEnd + " amount to $" + total);
 			
 			System.out.println("\n\n\nwould you like to output these transaction details to a csv file? (y/N)");
 			String answer = keyboard.next().toLowerCase();
@@ -257,7 +250,7 @@ public class CustomerDriver {
 						trCount+=1 ;
 					}
 					
-					writer.write("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + startDate + " and " + endDate + " amount to " + total + "\n\n\n");
+					writer.write("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + mmddyyyyStart + " and " + mmddyyyyEnd + " amount to " + total + "\n\n\n");
 					writer.flush();
 					writer.close();
 					System.out.println("the file (\"transactionDetails.csv\") is now located at your desktop");
