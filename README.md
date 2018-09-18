@@ -19,3 +19,34 @@ Download and extract all files (uncompress the downloaded zip folder) and import
 
 **Functional Requirement 2.1.2 - Customer Details Module**
 - option 4-7 of the application address customer details analysis 
+
+
+
+
+### 2.2.1 - Apache Sqoop
+
+**Functional Requirement 2.2.1 - Importing data from RDBMS to Hadoop HDFS using Sqoop**
+- the sqoop-jobs.txt file, located at */ETL/ETL-sqoop/sqoop-jobs.txt*, contains instructions and sqoop commands to create metastore jobs that when executed extract, transform, and import data to the Hadoop cluster \- From Putty or HortonWorks Sandbox CLI, create and execute jobs
+
+
+### 2.2.2 - Apache Hive
+
+**Functional Requirement 2.2.2 - Loading data into Hive Warehouse**
+- the hive.hql file, located at */ETL/ETL-hive/hive.hql*, contains instructions and hive scripts that load and transform data into partitioned Hive tables in the data warehouse \- From the Ambari GUI, select Hive view and run the scripts
+
+
+
+### 2.2.3 - Apache Oozie
+**Functional Requirement 2.2.3 - Automating the process**
+
+
+
+### 2.2.4 - Apache Oozie Coordinator
+**Functional Requirement 2.2.4 - Scheduling and Optimizing the process**
+
+
+
+
+
+
+
