@@ -20,16 +20,18 @@ public class inputValidators {
 	
 	
 	// y/N answer input validator 
-	public static void yesNoAnswerValidator(String answer, Scanner keyboard) {
+	public static String yesNoAnswerValidator(String answer, Scanner keyboard) {
 		boolean validAnswer = false;
 		while (validAnswer == false) {
-			System.out.println("=> enter \"y\" for Yes or \"N\" for No");
-			answer = keyboard.next().toLowerCase();
-			
 			if (answer.equals("y") || answer.equals("n")) {
 				validAnswer = true;
+				break;
 			}
+			
+			System.out.println("=> enter \"y\" for Yes or \"N\" for No");
+			answer = keyboard.next().toLowerCase();
 		}
+		return answer;
 	}
 	
 

@@ -1,7 +1,9 @@
 package drivers;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,17 +38,52 @@ public class TransactionDriver {
 		
 		TransactionDAO tDAO = new TransactionDAO();
 		ArrayList<Transaction> transactions = tDAO.getTransactionsByZipCode(zip, year, month);
-		System.out.println("\tCOUNT\t TRANSACTION TYPE\t TRANSACTION VALUE ($USD)\t DAY/MONTH/YEAR\t\t CARD NO.\t CUSTOMER SSN\t BRANCH CODE\t ");
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
+		System.out.format("%-5s | %-20s | %-12s | %-20s | %-20s | %-12s | %-20s\n", "COUNT", "TRANSACTION TYPE", "VALUE ($USD)", "DATE (mm/dd/yyyy)", "CREDIT CARD NO.", "CUSTOMER SSN", "BRANCH CODE");
+		System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 		
 		int count = 1;
+		double total = 0;
 		for (Transaction transaction :transactions) {
-			System.out.println("\t" + count + "\t|\t" + transaction.getType() + "\t|\t" + "$" + transaction.getValue() + "\t|\t" + transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear() + "\t|\t" + transaction.getCardNo() + "\t|\t" + transaction.getSSN() + "\t|\t" + transaction.getBranchCode() + "\t");  
-			System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
+			String date = transaction.getMonth() + "/" + transaction.getDay() + "/" + transaction.getYear();
+			System.out.format("%-5s | %-20s | %-12s | %-20s | %-20s | %-12s | %-20s\n", count, transaction.getType(), "$" + transaction.getValue(), date, transaction.getCardNo(), transaction.getSSN(), transaction.getBranchCode());  
+			System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 			count++;
+			total+=transaction.getValue();
 		}
 		if (count == 1) {
 			System.out.println("there are no recorded transactions by customers living in zipcode " + zip + " during " + month + "/" + year);
+		} else {
+			System.out.println("\nthe total value of transactions by customers living in zipcoe " + zip + " during " + month + "/" + year + "amounts to $" + total);
+			
+			
+			System.out.println("\n\n\n=> would you like to output these transaction details to a csv file? (y/N)");
+			String answer = inputValidators.yesNoAnswerValidator(keyboard.next().toLowerCase(), keyboard);
+			
+			
+			// output file do Desktop if user wants
+			if (answer.equals("y")) {
+				System.out.println("\n\ngenerating file...");
+				try {
+					// File file = new File("C:\\Users\\Students\\Desktop\\transactionDetails.csv"); // for Platform's desktops
+					File file = new File("/users/frankie/desktop/CDW_SAPP_transaction_details.csv"); // for my laptop
+					file.createNewFile();
+					FileWriter writer = new FileWriter(file); 
+					
+					int trCount = 1;
+					for (Transaction transaction :transactions) {
+						String date = transaction.getMonth() + "/" + transaction.getDay() + "/" + transaction.getYear();
+						writer.write(trCount + "," + transaction.getType() + "," + "$" + transaction.getValue() + date + "," + transaction.getCardNo() + "," + transaction.getSSN() + "," + transaction.getBranchCode() + "\n");  
+						trCount+=1 ;
+					}
+					
+					writer.write("\nthe total value of transactions by customers living in zipcoe " + zip + " during " + month + "/" + year + "amounts to $" + total);
+					writer.flush();
+					writer.close();
+					System.out.println("the file (\"CDW_SAPP_transaction_details.csv\") is now located at your desktop");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		count = 1;
 		System.out.println("\n\n\n");
