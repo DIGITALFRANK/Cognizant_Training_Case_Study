@@ -81,11 +81,7 @@ public class CustomerDriver {
 	public static void updateCustomerDetails() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, SQLException {
 		System.out.println("enter your customers SSN");
 		Scanner keyboard = new Scanner(System.in);
-		String ssnString = keyboard.next();  // this might have to be turned to String for validation purposes => you'll then later have to Integer.parseInt()
-		
-		
-		// validation use #4's ssn validation code => maybe here you can just call that function
-		inputValidators.ssnInputValidator(ssnString, keyboard);
+		String ssnString = inputValidators.ssnInputValidator(keyboard.next(), keyboard);  // for validation purposes
 		int ssn = Integer.parseInt(ssnString);
 		
 		CustomerDAO customer = new CustomerDAO();
@@ -158,13 +154,14 @@ public class CustomerDriver {
 			transactions = cDAO.getMonthlyBill(month, year, cc);
 			// getCustDetails()?
 			// printCustDetails()?
-			System.out.println("\tCOUNT\t DAY/MONTH/YEAR\t\t BRANCH CODE\t TRANSACTION TYPE\t TRANSACTION VALUE ($USD)\t CUSTUMER NAME\t ");
+			System.out.format("%-5s | %-20s | %-12s | %-20s | %-20s | %-20s\n", "COUNT", "DATE (mm/dd/yyyy)", "BRANCH CODE", "TRANSACTION TYPE", "VALUE ($USD)", "CUSTUMER NAME");
 			System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
 			
 			int count = 1;
 			double total = 0;
 			for (Transaction transaction :transactions) {
-				System.out.println("\t" + count + "\t|\t" + transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear() + "\t|\t" + transaction.getBranchCode() + "\t|\t" + transaction.getType() + "\t|\t" + "$" + transaction.getValue() + "\t|\t" + transaction.getCustName() + "\t");  
+				String date = transaction.getMonth() + "/" + transaction.getDay() + "/" + transaction.getYear();
+				System.out.format("%-5s | %-20s | %-12s | %-20s | %-20s | %-20s\n", count, date, transaction.getBranchCode(), transaction.getType(), "$" + transaction.getValue(), transaction.getCustName());  
 				System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
 				count++;
 				total+=transaction.getValue();
@@ -173,6 +170,37 @@ public class CustomerDriver {
 				System.out.println("there are no recorded transactions during the month of " + month + "/" + year + " by credit card no. " + cc);
 			} else {
 				System.out.println("\nthe total bill for the month of " + month + "/" + year + " on credit card no. " + cc + " is $" + total);
+				
+				
+				
+				System.out.println("\n\n\n=> would you like to output these transaction details to a csv file? (y/N)");
+				String answer = inputValidators.yesNoAnswerValidator(keyboard.next().toLowerCase(), keyboard);
+				
+				
+				// output file do Desktop if user wants
+				if (answer.equals("y")) {
+					System.out.println("\n\ngenerating file...");
+					try {
+						// File file = new File("C:\\Users\\Students\\Desktop\\transactionDetails.csv"); // for Platform's desktop
+						File file = new File("/users/frankie/desktop/CDW_SAPP_transaction_details.csv"); // for my laptop
+						file.createNewFile();
+						FileWriter writer = new FileWriter(file); 
+						
+						int trCount = 1;
+						for (Transaction transaction :transactions) {
+							String date = transaction.getMonth() + "/" + transaction.getDay() + "/" + transaction.getYear();
+							writer.write(trCount + "," + date + "," + transaction.getBranchCode() + "," + transaction.getType() + "," + "$" + transaction.getValue() + "," + transaction.getCustName() + "\n");  
+							trCount+=1 ;
+						}
+						
+						writer.write("\nthe total bill for the month of " + month + "/" + year + " on credit card no. " + cc + " is $" + total);
+						writer.flush();
+						writer.close();
+						System.out.println("the file (\"CDW_SAPP_transaction_details.csv\") is now located at your desktop");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
 			count = 1;
 			System.out.println("\n\n\n__________________________________________________________________________________________________");
@@ -232,29 +260,30 @@ public class CustomerDriver {
 			System.out.println("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + mmddyyyyStart + " and " + mmddyyyyEnd + " amount to $" + total);
 			
 			System.out.println("\n\n\n=> would you like to output these transaction details to a csv file? (y/N)");
-			String answer = keyboard.next().toLowerCase();
-			inputValidators.yesNoAnswerValidator(answer, keyboard);
+			String answer = inputValidators.yesNoAnswerValidator(keyboard.next().toLowerCase(), keyboard);
+	
 			
 			
 			// output file do Desktop if user wants
 			if (answer.equals("y")) {
-				System.out.println("generating file...");
+				System.out.println("\n\ngenerating file...");
 				try {
 					// File file = new File("C:\\Users\\Students\\Desktop\\transactionDetails.csv");
-					File file = new File("/users/frankie/desktop/transactionDetails2.csv");
+					File file = new File("/users/frankie/desktop/CDW_SAPP_transaction_details.csv");
 					file.createNewFile();
 					FileWriter writer = new FileWriter(file); 
 					
 					int trCount = 1;
 					for (Transaction transaction :transactions) {
-						writer.write(trCount + "," + transaction.getDay() + "/" + transaction.getMonth() + "/" + transaction.getYear() + "," + transaction.getBranchCode() + "," + transaction.getCardNo() + "," + transaction.getType() + "," + "$" + transaction.getValue() + "," + transaction.getCustName() + "\n");  
+						String date = transaction.getMonth() + "/" + transaction.getDay() + "/" + transaction.getYear();
+						writer.write(trCount + "," + date + "," + transaction.getBranchCode() + "," + transaction.getCardNo() + "," + transaction.getType() + "," + "$" + transaction.getValue() + "," + transaction.getCustName() + "\n");  
 						trCount+=1 ;
 					}
 					
 					writer.write("\nthe total charges by " + customer + " (SSN: " + ssn + ") for the period between " + mmddyyyyStart + " and " + mmddyyyyEnd + " amount to " + total + "\n\n\n");
 					writer.flush();
 					writer.close();
-					System.out.println("the file (\"transactionDetails.csv\") is now located at your desktop");
+					System.out.println("the file (\"CDW_SAPP_transaction_details.csv\") is now located at your desktop");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
