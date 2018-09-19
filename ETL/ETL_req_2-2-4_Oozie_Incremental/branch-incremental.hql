@@ -1,0 +1,59 @@
+
+
+-- 1.A create staging table for incremental data upload, at the location of the incremental files
+
+DROP TABLE IF EXISTS CDW_SAPP_D_BRANCH_INCREMENTAL;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS CDW_SAPP_D_BRANCH_INCREMENTAL (
+    BRANCH_CODE INT,
+    BRANCH_NAME STRING,
+    BRANCH_STREET STRING,
+    BRANCH_CITY STRING,
+    BRANCH_STATE STRING,
+    BRANCH_ZIP INT,
+    BRANCH_PHONE STRING,
+    LAST_UPDATED TIMESTAMP
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+LOCATION '/user/maria_dev/Credit_Card_System/CDW_SAPP_BRANCH/incremental';
+
+
+
+
+
+-- 1.B insert new incremental data into the warehouse
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+INSERT INTO TABLE CDW_SAPP_D_BRANCH_PARTITIONED_BY_STATE
+PARTITION (BRANCH_STATE)
+SELECT BRANCH_CODE,
+    BRANCH_NAME,
+    BRANCH_STREET,
+    BRANCH_CITY,
+    BRANCH_ZIP,
+    BRANCH_PHONE,
+    LAST_UPDATED,
+	BRANCH_STATE
+FROM CDW_SAPP_D_BRANCH_INCREMENTAL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

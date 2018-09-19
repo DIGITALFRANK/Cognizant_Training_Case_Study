@@ -1,0 +1,64 @@
+
+-- 3.A create staging table for incremental data upload CDW_SAPP_D_CUSTOMER_INCREMENTAL, at the location of the incremental files
+
+DROP TABLE IF EXISTS CDW_SAPP_D_CUSTOMER_INCREMENTAL;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS CDW_SAPP_D_CUSTOMER_INCREMENTAL (
+    CUST_SSN INT,
+    CUST_F_NAME STRING,
+    CUST_M_NAME STRING,
+    CUST_L_NAME STRING,
+    CUST_CC_NO STRING,
+    CUST_STREET STRING,
+    CUST_CITY STRING,
+    CUST_STATE STRING
+    CUST_COUNTRY STRING,
+    CUST_ZIP INT,
+    CUST_PHONE STRING,
+    CUST_EMAIL STRING,
+    LAST_UPDATED TIMESTAMP
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+LOCATION '/user/maria_dev/Credit_Card_System/CDW_SAPP_CUSTOMER/incremental';
+
+
+
+
+
+
+-- 3.B insert new incremental Customer data into the warehouse
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+INSERT INTO TABLE CDW_SAPP_D_CUSTOMER_PARTITIONED_BY_STATE
+PARTITION (CUST_STATE)
+SELECT
+    CUST_SSN,
+    CUST_F_NAME,
+    CUST_M_NAME,
+    CUST_L_NAME,
+    CUST_CC_NO,
+    CUST_STREET,
+    CUST_CITY,
+    CUST_COUNTRY,
+    CUST_ZIP,
+    CUST_PHONE,
+    CUST_EMAIL,
+    LAST_UPDATED,
+    CUST_STATE
+FROM CDW_SAPP_D_CUSTOMER_INCREMENTAL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

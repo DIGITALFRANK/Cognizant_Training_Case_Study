@@ -1,0 +1,318 @@
+
+-- 2.2.2 Data Loading with Hive
+-- Utilize Hive to create tables in the Hadoop Filesystem and then load the Credit Card System data extracted via Sqoop into those tables.
+-- Data Engineers will need to transform the data based on requirements found in the Mapping Document.
+
+-- lines beginning with "--" are instructional comments
+
+
+
+
+
+
+
+
+-- 1.A create staging table CDW_SAPP_D_BRANCH at the loction of the files 
+
+DROP TABLE IF EXISTS CDW_SAPP_D_BRANCH;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS CDW_SAPP_D_BRANCH (
+    BRANCH_CODE INT,
+    BRANCH_NAME STRING,
+    BRANCH_STREET STRING,
+    BRANCH_CITY STRING,
+    BRANCH_STATE STRING,
+    BRANCH_ZIP INT,
+    BRANCH_PHONE STRING,
+    LAST_UPDATED TIMESTAMP
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+LOCATION '/user/maria_dev/Credit_Card_System/CDW_SAPP_BRANCH';
+
+
+
+-- 1.B create Hive ORC table to be partioned by state
+
+DROP TABLE IF EXISTS CDW_SAPP_D_BRANCH_PARTITIONED_BY_STATE;
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+CREATE TABLE IF NOT EXISTS CDW_SAPP_D_BRANCH_PARTITIONED_BY_STATE (
+    BRANCH_CODE INT,
+    BRANCH_NAME STRING,
+    BRANCH_STREET STRING,
+    BRANCH_CITY STRING,
+    BRANCH_ZIP INT,
+    BRANCH_PHONE STRING,
+    LAST_UPDATED TIMESTAMP
+)
+PARTITIONED BY (BRANCH_STATE STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+STORED AS ORC;
+
+
+
+-- 1.C insert data into Hive partitioned ORC table
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+INSERT OVERWRITE TABLE CDW_SAPP_D_BRANCH_PARTITIONED_BY_STATE
+PARTITION (BRANCH_STATE)
+SELECT BRANCH_CODE,
+    BRANCH_NAME,
+    BRANCH_STREET,
+    BRANCH_CITY,
+    BRANCH_ZIP,
+    BRANCH_PHONE,
+    LAST_UPDATED,
+	BRANCH_STATE
+FROM CDW_SAPP_D_BRANCH;
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- 2.A create external table CDW_SAPP_F_CREDIT_CARD at the location of the files
+
+DROP TABLE IF EXISTS CDW_SAPP_F_CREDIT_CARD;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS CDW_SAPP_F_CREDIT_CARD (
+    TRANSACTION_ID INT,
+    CUST_SSN INT,
+    TIMEID STRING,
+    CUST_CC_NO STRING,
+    BRANCH_CODE INT,
+    TRANSACTION_TYPE STRING
+    TRANSACTION_VALUE DECIMAL(20, 3)
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+LOCATION '/user/maria_dev/Credit_Card_System/CDW_SAPP_CREDIT_CARD';
+
+
+
+-- 2.B create Hive ORC table for Transaction data, to be partitioned by transaction type
+
+DROP TABLE IF EXISTS CDW_SAPP_F_CREDIT_CARD_PARTITIONED_BY_TRRANSCTION_TYPE;
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+CREATE TABLE CDW_SAPP_CREDIT_CARD_F_PARTITIONED_BY_TRRANSCTION_TYPE (
+    TRANSACTION_ID INT,
+    CUST_SSN INT,
+    TIMEID STRING,
+    CUST_CC_NO STRING,
+    BRANCH_CODE INT,
+    TRANSACTION_VALUE DECIMAL(20, 3)
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+PARTITIONED BY (TRANSACTION_TYPE STRING)
+STORED AS ORC;
+
+
+
+--2.C insert data into Hive partitioned ORC table
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+INSERT OVERWRITE TABLE CDW_SAPP_F_CREDIT_CARD_PARTITIONED_BY_TRRANSCTION_TYPE 
+PARTITION (TRANSACTION_TYPE)
+SELECT
+    TRANSACTION_ID,
+    CUST_SSN,
+    TIMEID,
+    CUST_CC_NO,
+    BRANCH_CODE,
+    TRANSACTION_VALUE,
+    TRANSACTION_TYPE
+FROM CDW_SAPP_F_CREDIT_CARD;
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- 3.A create staging table DW_SAPP_D_CUSTOMER, at the location of the files
+
+DROP TABLE IF EXISTS CDW_SAPP_D_CUSTOMER;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS CDW_SAPP_D_CUSTOMER (
+    CUST_SSN INT,
+    CUST_F_NAME STRING,
+    CUST_M_NAME STRING,
+    CUST_L_NAME STRING,
+    CUST_CC_NO STRING,
+    CUST_STREET STRING,
+    CUST_CITY STRING,
+    CUST_STATE STRING,
+    CUST_COUNTRY STRING,
+    CUST_ZIP INT,
+    CUST_PHONE STRING,
+    CUST_EMAIL STRING,
+    LAST_UPDATED TIMESTAMP
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+LOCATION '/user/maria_dev/Credit_Card_System/CDW_SAPP_CUSTOMER';
+
+
+
+-- 3.B create Hive ORC table for customer data, no partitions
+
+DROP TABLE IF EXISTS CDW_SAPP_D_CUSTOMER_NO_PARTITIONS;
+
+CREATE TABLE IF NOT EXISTS CDW_SAPP_D_CUSTOMER_NO_PARTITIONS (
+    CUST_SSN INT,
+    CUST_F_NAME STRING,
+    CUST_M_NAME STRING,
+    CUST_L_NAME STRING,
+    CUST_CC_NO STRING,
+    CUST_STREET STRING,
+    CUST_CITY STRING,
+    CUST_STATE STRING,
+    CUST_COUNTRY STRING,
+    CUST_ZIP INT,
+    CUST_PHONE STRING,
+    CUST_EMAIL STRING,
+    LAST_UPDATED TIMESTAMP
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+STORED AS ORC;
+
+
+
+-- 3.C insert Customer data into Hive ORC table
+
+INSERT OVERWRITE TABLE CDW_SAPP_D_CUSTOMER_NO_PARTITIONS
+SELECT
+    CUST_SSN,
+    CUST_F_NAME,
+    CUST_M_NAME,
+    CUST_L_NAME,
+    CUST_CC_NO,
+    CUST_STREET,
+    CUST_CITY,
+    CUST_STATE,
+    CUST_COUNTRY,
+    CUST_ZIP,
+    CUST_PHONE,
+    CUST_EMAIL,
+    LAST_UPDATED
+FROM CDW_SAPP_D_CUSTOMER;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- 4.A create staging table CDW_SAPP_D_TIME, at the location of the files 
+
+DROP TABLE IF EXISTS CDW_SAPP_D_TIME;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS CDW_SAPP_D_TIME (
+    TIMEID DATE,
+    TRANSACTION_ID INT,
+    DAY INT,
+    MONTH INT,
+    QUARTER STRING,
+    YEAR INT
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+LOCATION '/user/maria_dev/Credit_Card_System/CDW_SAPP_TIME';
+
+
+
+-- 4.B create Hive ORC table, to be partitioned quarterly
+
+DROP TABLE IF EXISTS CDW_SAPP_D_TIME_PARTITIONED_QUARTERLY;
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+CREATE TABLE IF NOT EXISTS CDW_SAPP_D_TIME_PARTITIONED_QUARTERLY (
+    TIMEID DATE,
+    TRANSACTION_ID INT,
+    DAY INT,
+    MONTH INT,
+    YEAR INT
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+PARTITIONED BY (QUARTER STRING)
+STORED AS ORC;
+
+
+
+-- 4.C insert Time data into Hive partitioned ORC table
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+SET hive.support.sql11.reserved.keywords=false;
+
+INSERT OVERWRITE TABLE CDW_SAPP_D_TIME_PARTITIONED_QUARTERLY
+PARTITION (QUARTER)
+SELECT 
+    TIMEID DATE,
+    TRANSACTION_ID INT,
+    DAY,
+    MONTH,
+    YEAR,
+    QUARTER
+FROM CDW_SAPP_D_TIME;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

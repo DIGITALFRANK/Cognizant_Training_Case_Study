@@ -1,0 +1,56 @@
+
+-- 2.A create staging table for incremental data upload CDW_SAPP_F_CREDIT_CARD_INCREMENTAL, at the location of the incremental files
+
+DROP TABLE IF EXISTS CDW_SAPP_F_CREDIT_CARD_INCREMENTAL;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS CDW_SAPP_F_CREDIT_CARD_INCREMENTAL (
+    TRANSACTION_ID INT,
+    CUST_SSN INT,
+    TIMEID STRING,
+    CUST_CC_NO STRING,
+    BRANCH_CODE INT,
+    TRANSACTION_TYPE STRING,
+    TRANSACTION_VALUE DECIMAL(20, 3)
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+LOCATION '/user/maria_dev/Credit_Card_System/CDW_SAPP_CREDIT_CARD/incremental';
+
+
+
+
+
+
+--2.B insert new incremental data into the warehouse
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+INSERT INTO TABLE CDW_SAPP_F_CREDIT_CARD_PARTITIONED_BY_TRANSACTION_TYPE 
+PARTITION (TRANSACTION_TYPE)
+SELECT
+    TRANSACTION_ID,
+    CUST_SSN,
+    TIMEID,
+    CUST_CC_NO,
+    BRANCH_CODE,
+    TRANSACTION_VALUE,
+    TRANSACTION_TYPE
+FROM CDW_SAPP_F_CREDIT_CARD_INCREMENTAL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

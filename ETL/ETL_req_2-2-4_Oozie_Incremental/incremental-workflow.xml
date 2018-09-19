@@ -1,0 +1,291 @@
+
+<!-- 2.2 Functional Requirements – ETL of Data -->
+<!-- 2.2.4 Workflow Automation with Oozie -->
+<!-- Create a Oozie workflow that will automate Sqoop data Loading and Hive table creation -->
+
+
+<!-- 1) Create a new Oozie workflow similar to the process of 2.2.3. -->
+<!-- This time, however, Sqoop should only import new data. Hive should then import only that new data. Original data should not be deleted in this process. -->
+<!-- 2) Incorporate this incrementally optimized workflow into an Oozie Coordinator that will execute with the following conditions: -->
+<!--  Every weekday between 08:00 and 18:00 EST -->
+<!--  Executes once every 20 minutes -->
+<!--  Starts on September 6th 2018 at 08:00 EST Ends on March 29th 2025 at 18:00 EST -->
+
+
+
+
+<!-- INSTRUCTIONS -->
+<!-- create a "credit_card_system_incremental_workflow" directory under user maria_dev -->
+<!-- upload all the incremental hive scripts (.hql files) as well as this incremental-workflow.xml and incremental-coordinator.xml to that directory in the HDFS -->
+<!-- make sure to place the incremental-job.properties file in the Documents folder of your Linux VM -->
+
+
+
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
+
+<workflow-app xmlns = "uri:oozie:workflow:0.2" name = "credit_card_system_workflow">
+    <start to="sqoop-node"/>  
+
+
+
+
+
+
+<!-- Sqoop Nodes (import new incremental data from RDBMS)-->
+
+
+
+
+
+
+    <action name="sqoop-node">
+        <sqoop xmlns="uri:oozie:sqoop-action:0.2">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node> 
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec branch_incremental</command>
+        </sqoop>
+        <ok to="sqoop-cc-node"/> 
+        <error to="sqoop-fail"/>
+    </action>
+
+
+    <action name="sqoop-cc-node">  
+        <sqoop xmlns="uri:oozie:sqoop-action:0.2">
+            <job-tracker>${jobTracker}</job-tracker> 
+            <name-node>${nameNode}</name-node>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec credit_card_incremental</command>
+        </sqoop>
+        <ok to="sqoop-time-node"/>
+        <error to="sqoop-fail"/>
+    </action>
+
+
+    <action name="sqoop-time-node">  
+        <sqoop xmlns="uri:oozie:sqoop-action:0.2">
+            <job-tracker>${jobTracker}</job-tracker> 
+            <name-node>${nameNode}</name-node>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec time_incremental</command>
+        </sqoop>
+        <ok to="sqoop-customer-node"/>
+        <error to="sqoop-fail"/>
+    </action>
+
+
+    <action name="sqoop-customer-node">  
+        <sqoop xmlns="uri:oozie:sqoop-action:0.2">
+            <job-tracker>${jobTracker}</job-tracker> 
+            <name-node>${nameNode}</name-node>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec customer_incremental</command>
+        </sqoop>
+        <ok to="hive-node-branch"/>
+        <error to="sqoop-fail"/>
+    </action>
+    
+
+
+
+
+
+
+
+<!-- Hive Nodes (create incremental data staging tables, insert new incremental data into data warehouse)-->
+
+
+
+
+
+
+
+   
+    <action name="hive-branch-node">
+        <hive xmlns="uri:oozie:hive-action:0.4">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <script>${nameNode}/user/maria_dev/credit_card_system_workflow/incremental/branch-incremental.hql</script>
+        </hive>
+        <ok to="hive-cc-node"/>
+        <error to="hive-fail"/>
+    </action>
+
+
+   
+    <action name="hive-cc-node">
+        <hive xmlns="uri:oozie:hive-action:0.4">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <script>${nameNode}/user/maria_dev/credit_card_system_workflow/incremental/credit_card-incremental.hql</script>
+        </hive>
+        <ok to="hive-customer-node"/>
+        <error to="hive-fail"/>
+    </action>
+
+  
+      
+    <action name="hive-customer-node">
+        <hive xmlns="uri:oozie:hive-action:0.4">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <script>${nameNode}/user/maria_dev/credit_card_system_workflow/incremental/customer-incremental.hql</script>
+        </hive>
+        <ok to="hive-time-node"/>
+        <error to="hive-fail"/>
+    </action>
+   
+
+
+    <action name="hive-time-node">
+        <hive xmlns="uri:oozie:hive-action:0.4">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <script>${nameNode}/user/maria_dev/credit_card_system_workflow/incremental/time-incremental.hql</script>
+        </hive>
+        <ok to="end"/>
+        <error to="hive-fail"/>
+    </action>
+
+
+
+
+
+
+
+
+<!-- shell commands (remove incremental staging directories) -->
+
+
+
+<!-- 
+
+
+
+
+    <action name="rm-branch-incremental-dir">
+        <shell xmlns="uri:oozie:shell-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node> 
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <command>hadoop fs -rm -r /user/maria_dev/Credit_Card_System/CDW_SAPP_BRANCH/incremental</command>
+        </shell>
+        <ok to="rm-cc-incremental-dir"/>
+        <error to="shell-command-fail"/>
+    </action>
+
+
+
+    <action name="rm-cc-incremental-dir">
+        <shell xmlns="uri:oozie:shell-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node> 
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <command>hadoop fs -rm -r /user/maria_dev/Credit_Card_System/CDW_SAPP_CREDIT_CARD/incremental</command>
+        </shell>
+        <ok to="rm-customer-incremental-dir"/>
+        <error to="shell-command-fail"/>
+    </action>
+
+
+
+    <action name="rm-customer-incremental-dir">
+        <shell xmlns="uri:oozie:shell-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node> 
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <command>hadoop fs -rm -r /user/maria_dev/Credit_Card_System/CDW_SAPP_CUSTOMER/incremental</command>
+        </shell>
+        <ok to="rm-time-incremental-dir"/>
+        <error to="shell-command-fail"/>
+    </action>
+
+
+
+    <action name="rm-time-incremental-dir">
+        <shell xmlns="uri:oozie:shell-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node> 
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <command>hadoop fs -rm -r /user/maria_dev/Credit_Card_System/CDW_SAPP_TIME/incremental</command>
+        </shell>
+        <ok to="end"/>
+        <error to="shell-command-fail" />
+    </action> -->
+
+
+
+
+
+
+
+<!-- kill nodes -->
+
+
+
+    <kill name="sqoop-fail"><message>Sqoop Job failed - error message[${wf:errorMessage(wf:lastErrorNode())}]</message></kill>
+    <kill name="hive-fail"><message>Hive Script failed - error message[${wf:errorMessage(wf:lastErrorNode())}]</message></kill>
+    <kill name="shell-command-fail"><message>Shell Command failed - error message[${wf:errorMessage(wf:lastErrorNode())}]</message></kill>
+
+    <end name="end"/>
+</workflow-app>
+
+
+
+<!-- LOGIN TO PUTTY OR SANDBOX CLI AS 'root' -->
+<!-- RUN THIS JOB  USING THE FOLLOWING COMMANDS => make sure to place the job.properties file in the Linux VM Documents folder  -->
+<!-- [root@sandbox ~]$ cd Documents  -->
+<!-- [root@sandbox Documents]$ oozie job   -oozie  http://localhost:11000/oozie  -config  incremental-job.properties  -run -->
+
+
+<!-- MONITOR OOZIE JOB FROM OOZIE WEB CONSOLE -->
+<!-- => navigate to your IP address :11000/oozie/        // 192.168.109.129:11000/oozie/ -->
+
+
+
+
+
+
+
+
+
