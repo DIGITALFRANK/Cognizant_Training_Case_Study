@@ -66,7 +66,7 @@ Download and extract all files (uncompress the downloaded zip folder) and import
 **Functional Requirement 2.2.5 - Exploration and visualization using Hive Query & Hive Visualization tool**
 - the folder `Visualizations_Explorations` contains two files each with a Hive query to to analyze and visualize the data.
 - in Ambari Hive View, run the queries and click the visualization icon to the right of the query window.
-![visualization_example](/ETL/Visualizations_Explorations/quarter_viz.png)
+![visualization_example](/ETL/Visualizations_Explorations/visualization_quarter.png)
 - click on the explorations tab at to top of the visualization window to further visualize and analyze the data
 
 
