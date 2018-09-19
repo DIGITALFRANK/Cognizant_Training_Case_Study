@@ -1,0 +1,29 @@
+
+<!-- Oozie RDMS data Import & Loading Coordinator
+will execute with the following conditions:
+
+ Every weekday between 08:00 and 18:00 EST
+ Executes once every 20 minutes
+ Starts on Sept 6th 2018 at 08:00 EST
+ Ends on March 29th 2025 at 18:00 EST -->
+
+
+<!-- this frequency is what the documentation requires, personally I would coordinate this job every Month, at most every week -->
+
+
+<coordinator-app xmlns="uri:oozie:coordinator:0.2" name="credit_card_system_workflow_coordinator" frequency="0/20 8,17 * * MON-FRI" start="2018-09-06T08:00Z" end="2025-03-29T18:00Z" timezone="America/New_York">
+   <!-- set the frequency here to every month! -->
+    <controls>
+        <timeout>1</timeout>
+        <concurrency>1</concurrency>
+        <execution>FIFO</execution>
+        <throttle>1</throttle>
+    </controls>
+
+    <action>
+        <workflow>
+            <app-path>${nameNode}/user/maria_dev/credit_card_system_workflow/workflow.xml</app-path>
+        </workflow>
+    </action>
+
+</coordinator-app>

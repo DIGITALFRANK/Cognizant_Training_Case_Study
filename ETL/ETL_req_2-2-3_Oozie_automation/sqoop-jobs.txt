@@ -1,0 +1,160 @@
+
+// lines begining with "//" are instructional comments
+
+
+
+
+
+
+
+
+// A.1 - Set up MySQL configuration to use Sqoop on RDBMS
+
+[ root@sandbox ~]# mysql -u root -p		// log into MySQL on Putty (or HortonWorks Sandbox CLI)
+# password		// type in the password for root user 
+mysql> show databases;		// list your databases
+mysql> use CDW_SAPP;		// select the database we'll use
+mysql> show tables;		// you can show tables, but don't you already know them by this point!?
+mysql> grant all privileges on CDW_SAPP.* to ''@'localhost';		// grant all privileges so we can do work between HDFS and this database
+
+
+
+
+// A.2 IF YOU HAVEN'T ALREADY, CREATE A BASH ALIAS FOR SQOOP METASTORE CONNECTION, START METASTORE SERVER
+
+// from root user, install nano:
+[ root@sandbox ~] yum intall nano
+
+// from your preferred user (maria_dev), open .bashrc file and create alias:
+[ maria_dev@sandbox ~] nano .bashrc
+
+// in nano, add the following alias to the .bashrc file:
+alias metastoreJobs='scoop job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop'
+
+// start the Sqoop Metastore server: the following command keeps the server running in the background - freeing up the Shell CLI window
+[ maria_dev@sandbox ~] nohup sqoop-metastore &
+
+
+
+
+// A.3 CREATE VM ALIAS FOR YOUR NAMENODE (you should've already done this in step 2.2.1)
+
+open NotePad as Administrator (right click on it from Window's search tab)
+
+Local Disc (C:) => Windows => System32 => drivers => etc => hosts
+
+168.192.109.129 sandbox.hortonworks.com
+
+
+
+
+
+
+
+
+
+
+
+// B - Create Sqoop Jobs to extract data from RDBMS to the respective target directories in Hadoop according to Mapping Document, save them in the Sqoop Metastore
+
+// B.1 - Sqoop Job for CDW_SAPP_BRANCH
+
+
+$ metastoreJobs
+--create branch_import
+-- import 
+--connect jdbc:mysql://localhost/CDW_SAPP 
+--driver com.mysql.jdbc.Driver -m1
+--target-dir /user/maria_dev/Credit_Card_System/CDW_SAPP_BRANCH
+--query 'SELECT branch_code,
+				branch_name,
+				branch_street,
+				branch_city,
+				branch_state,
+				IFNULL(branch_zip, 99999),
+				CONCAT("(", SUBSTRING(branch_phone, 1, 3), ")", SUBSTRING(branch_phone, 4, 3), "-", SUBSTRING(branch_phone, 7, 4)) "branch_phone",
+				last_updated
+			FROM CDW_SAPP_BRANCH
+			WHERE $CONDITIONS'
+
+
+// B.2 - Sqoop Job for CDW_SAPP_CREDITCARD
+
+$ metastoreJobs
+--create credit_card_import
+-- import 
+--connect jdbc:mysql://localhost/CDW_SAPP 
+--driver com.mysql.jdbc.Driver -m1
+--target-dir /user/maria_dev/Credit_Card_System/CDW_SAPP_CREDIT_CARD
+--query 'SELECT transaction_id,
+				credit_card_no,
+				CONCAT(year, LPAD(month, 2, "0"), LPAD(day, 2, "0")) "time_id",
+				cust_ssn,
+				branch_code,
+				transaction_type,
+				transaction_value
+			FROM CDW_SAPP_CREDITCARD
+			WHERE $CONDITIONS'
+
+
+// B.3 - Sqoop Job for CDW_SAPP_TIME
+
+$ metastoreJobs
+--create time_import
+-- import 
+--connect jdbc:mysql://localhost/CDW_SAPP 
+--driver com.mysql.jdbc.Driver -m1
+--target-dir /user/maria_dev/Credit_Card_System/CDW_SAPP_TIME
+--query 'SELECT CAST(CONCAT(year, LPAD(month, 2, "0"), LPAD(day, 2, "0")) as DATE) "time_id",
+				transaction_id,
+				day,
+				month,
+				CASE
+					WHEN month <= 3 THEN "Quarter1"
+					WHEN month <= 6 THEN "Quarter2"
+					WHEN month <= 9 THEN "Quarter3"
+					WHEN month <= 12 THEN "Quarter4"
+				END AS quarter,
+				year
+			FROM CDW_SAPP_CREDITCARD
+			WHERE $CONDITIONS'
+
+
+// B.4 - Sqoop Job for CDW_SAPP_CUSTOMER
+
+$ metastoreJobs 
+--create customer_import
+-- import 
+--connect jdbc:mysql://localhost/CDW_SAPP 
+--driver com.mysql.jdbc.Driver -m1
+--target-dir /user/maria_dev/Credit_Card_System/CDW_SAPP_CUSTOMER
+--query 'SELECT ssn,
+				CONCAT(UPPER(SUBSTRING(first_name, 1, 1)), LOWER(SUBSTRING(first_name, 2, LENGTH(first_name)))) "first_name",
+				LOWER(middle_name),
+				CONCAT(UPPER(SUBSTRING(last_name, 1, 1)), LOWER(SUBSTRING(last_name, 2, LENGTH(last_name)))) "last_name",
+				credit_card_no,
+				CONCAT(street_name, ", ", apt_no) "cust_street",
+				cust_city,
+				cust_state,
+				cust_country,
+				CONVERT(cust_zip, UNSIGNED),
+				CONCAT(SUBSTRING(cust_phone, 1, 3), "-", SUBSTRING(cust_phone, 4, 4)) "cust_phone",
+				cust_email
+				last_updated
+			FROM CDW_SAPP_CUSTOMER
+			WHERE $CONDITIONS'
+
+
+
+// do not execute these scoop jobs just yet, we will execute them in the automated Oozie workflow
+
+
+
+
+
+
+
+
+
+
+
