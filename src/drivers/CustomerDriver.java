@@ -127,14 +127,7 @@ public class CustomerDriver {
 	
 	// functional requirement 3
 	public static void getMonthlyBill() {
-		Scanner keyboard = new Scanner(System.in);
-//		System.out.println("enter a two digit month");
-//		int month = keyboard.nextInt();
-//		System.out.println("enter a four digit year");
-//		int year = keyboard.nextInt();
-		
-		
-		
+		Scanner keyboard = new Scanner(System.in);		
 		System.out.println("=> please enter the month and year (MM/YYYY)"); 
 		String mmyyyy = keyboard.next();
 		// validate month and year input 
