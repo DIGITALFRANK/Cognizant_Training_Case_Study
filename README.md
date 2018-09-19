@@ -18,7 +18,7 @@ Download and extract all files (uncompress the downloaded zip folder) and import
 ### Functional Requirement 2.1.1 - Transaction Details Module
 - options 1-3 of the Java application address transaction details analysis 
 
-## Functional Requirement 2.1.2 - Customer Details Module
+### Functional Requirement 2.1.2 - Customer Details Module
 - options 4-7 of the Java application address customer details analysis 
 
 
@@ -43,20 +43,28 @@ Download and extract all files (uncompress the downloaded zip folder) and import
 **Functional Requirement 2.2.3 - Automating the process with Oozie**
 - the folder `ETL_req_2-2-3_Oozie_automation` contains a number of files that will allow us to set up process automation using Oozie.
 - create a directory `credit_card_system_workflow` under user `maria_dev` in HDFS using Ambari Files View.
-- load all the hive scripts (.hql files) from `ETL_req_2-2-3_Oozie_automation`, as well as the `workflow.xml` and `coordinator.xml` files to `/user/maria_dev/credit_card_system_workflow`.
+- load all the hive scripts (.hql files) from the `ETL_req_2-2-3_Oozie_automation` folder, as well as the `workflow.xml` and `coordinator.xml` files to `/user/maria_dev/credit_card_system_workflow`.
 - using WinSCP or similar software, upload the `job.properties` file inside the `ETL_req_2-2-3_Oozie_automation` folder to your Linux VM's Document folder.
-- Login to Putty or HortonWorks Sandbox CLI as 'root', navigate to the Documents folder and run the following command to launch the process:
-`oozie job   -oozie  http://localhost:11000/oozie  -config  job.properties  -run`
+- login to Putty or HortonWorks Sandbox CLI as 'root', navigate to the Documents folder and run the following command to launch the process:
+`oozie job   -oozie  http://localhost:11000/oozie  -config  job.properties  -run`.
 
 
 
 ### 2.2.4 - PROCESS OPTIMIZATION MODULE (incremental data ETL) - Apache Oozie Coordinator
 **Functional Requirement 2.2.4 - Scheduling and Optimizing the incremental ETL process**
-
+- the folder `ETL_req_2-2-4_Oozie_incremental` contains a number of files that will allow us to set up incremental ELT automation for future data using Oozie and it's scheduling ability.
+- create a directory `credit_card_system_incremental` under user `maria_dev` in HDFS using Ambari Files View.
+- load all the hive scripts (.hql files) from the `ETL_req_2-2-4_Oozie_incremental` folder, as well as the `workflow.xml` and `coordinator.xml` files to `/user/maria_dev/credit_card_system_incremental`.
+- using WinSCP or similar software, upload the `incremental-job.properties` file inside the `ETL_req_2-2-4_Oozie_incremental` folder to your Linux VM's Document folder.
+- Login to Putty or HortonWorks Sandbox CLI as 'root', navigate to the Documents folder and run the following command to launch the process:
+`oozie job   -oozie  http://localhost:11000/oozie  -config  job.properties  -run`.
 
 
 ### 2.2.5 - VISUALIZATION OF DATASET
 **Functional Requirement 2.2.5 - Exploration and visualization using Hive Query & Hive Visualization tool**
+- the folder `Visualizations-Explorations` contains two files each with a Hive query to to analyze and visualize the data.
+- in Ambari Hive View, run the queries and click the visualization icon to the right of the query window.
+- click on the explorations tab at to top of the visualization window to further visualize and analyze the data
 
 
 
