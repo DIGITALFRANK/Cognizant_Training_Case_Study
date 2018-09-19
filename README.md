@@ -67,7 +67,8 @@ Download and extract all files (uncompress the downloaded zip folder) and import
 - the folder `Visualizations_Explorations` contains two files each with a Hive query to to analyze and visualize the data.
 - in Ambari Hive View, run the queries and click the visualization icon to the right of the query window.
 ![visualization_example](/ETL/Visualizations_Explorations/snapshots/visualization_quarter.png)
-- click on the explorations tab at to top of the visualization window to further visualize and analyze the data
+- click on the explorations tab at to top of the visualization window to further visualize and analyze the data.
+![visualization_example](/ETL/Visualizations_Explorations/snapshots/exploration_quarter_type.png)
 
 
 
