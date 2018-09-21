@@ -54,8 +54,8 @@ Download and extract all files (uncompress the downloaded zip folder) and import
 ### 2.2.4 - PROCESS OPTIMIZATION MODULE (incremental data ETL) - Apache Oozie Coordinator
 **Functional Requirement 2.2.4 - Scheduling and Optimizing the incremental ETL process**
 - the folder `/ETL/ETL_req_2-2-4_Oozie_incremental/` contains a number of files that will allow us to set up incremental ELT automation for future data using Oozie and it's scheduling ability.
-- using Ambari Files View, create a directory named `incremental` inside the previously created `credit_card_system_workflow` directory in HDFS under user `maria_dev`.
-- load all the hive scripts (.hql files) from the `/ETL/ETL_req_2-2-4_Oozie_incremental/` folder, as well as the `incremental-workflow.xml` and `incremental-coordinator.xml` files to `/user/maria_dev/credit_card_system_workflow/incremental/`.
+- using Ambari Files View, create a directory named `_incremental` inside the previously created `credit_card_system_workflow` directory in HDFS under user `maria_dev`.
+- load all the hive scripts (.hql files) from the `/ETL/ETL_req_2-2-4_Oozie_incremental/` folder, as well as the `incremental-workflow.xml` and `incremental-coordinator.xml` files to `/user/maria_dev/credit_card_system_workflow/_incremental/`.
 - follow the directions in the `sqoop-incremental-jobs.txt` file to create the required incremental Metastore jobs.
 - using WinSCP or similar software, upload the `incremental-job.properties` file from the `/ETL/ETL_req_2-2-4_Oozie_incremental/` folder to your Linux VM's Document folder.
 - Login to Putty or HortonWorks Sandbox CLI as 'root', navigate to the Documents folder and run the following command to launch the process:
