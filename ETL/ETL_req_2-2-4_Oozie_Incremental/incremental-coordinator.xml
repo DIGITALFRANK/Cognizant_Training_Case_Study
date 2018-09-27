@@ -12,15 +12,17 @@ will execute with the following conditions:
    
     <controls>
         <timeout>1</timeout>
-        <concurrency>1</concurrency>
+        <concurrency>2</concurrency>
         <execution>FIFO</execution>
         <throttle>1</throttle>
     </controls>
 
     <action>
         <workflow>
-            <app-path>${nameNode}/user/maria_dev/credit_card_system_incremental_workflow/incremental-workflow.xml</app-path>
+            <app-path>${nameNode}/user/maria_dev/credit_card_system_workflow/_incremental/incremental-workflow.xml</app-path>
         </workflow>
     </action>
 
 </coordinator-app>
+
+

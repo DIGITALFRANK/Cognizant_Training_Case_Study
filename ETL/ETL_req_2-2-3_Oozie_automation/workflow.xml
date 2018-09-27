@@ -28,7 +28,7 @@ that will execute with the following conditions:
 <!-- <?xml version="1.0" encoding="UTF-8"?> -->
 
 <workflow-app xmlns = "uri:oozie:workflow:0.2" name = "credit_card_system_workflow">
-    <start to="sqoop-node"/>  
+    <start to="sqoop-branch-node"/>  
 
 
 
@@ -37,7 +37,7 @@ that will execute with the following conditions:
 
 
 
-    <action name="sqoop-node">    <!--node name--> 
+    <action name="sqoop-branch-node">    <!--node name--> 
         <sqoop xmlns="uri:oozie:sqoop-action:0.2">
             <job-tracker>${jobTracker}</job-tracker>  <!--job tracking node is http://sandbox.hortonworks.com:8050 which is define in job properties--> 
             <name-node>${nameNode}</name-node> <!--name node is hdfs://sandbox.hortonworks.com:8020 which is defined in job properties--> 
@@ -106,7 +106,7 @@ that will execute with the following conditions:
             </configuration>
             <command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec customer_import</command>
         </sqoop>
-        <ok to="hive-node-branch"/>
+        <ok to="hive-branch-node"/>
         <error to="sqoop-fail"/>
     </action>
     

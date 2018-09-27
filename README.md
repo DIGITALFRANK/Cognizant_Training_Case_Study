@@ -13,6 +13,7 @@
 ### 2.1 - Operational Database (MySQL RDBMS)
 
 Download and extract all files (uncompress the downloaded zip folder) and import that entire folder into an IDE such as Eclipse that supports Java. Open the *CDW\_SAPP.sql* file in MySQL Workbench and run the entire file.  Be sure to match your database credentials with the credentials in the db.properties file located at */src/resources/db.properties*.  In your Integrated Development Environment, run the **_MainDriver.java_** class, which will start the program in your console.  In the IDE's console, you may use the application for Data Analysis as you wish and exit the application at any moment. (for file-writing capabilities, change the new file path inside */src/drivers/TransactionDriver.java* and inside */src/drivers/CustomerDriver.java*, to the path of your own desktop, weather you are running Windows or Mac)
+![analysis_example](/ETL/Visualizations_Explorations/snapshots/java_console.png)
 
 
 ### Functional Requirement 2.1.1 - Transaction Details Module
@@ -57,7 +58,7 @@ Download and extract all files (uncompress the downloaded zip folder) and import
 - using Ambari Files View, create a directory named `_incremental` inside the previously created `credit_card_system_workflow` directory in HDFS under user `maria_dev`.
 - load all the hive scripts (.hql files) from the `/ETL/ETL_req_2-2-4_Oozie_incremental/` folder, as well as the `incremental-workflow.xml` and `incremental-coordinator.xml` files to `/user/maria_dev/credit_card_system_workflow/_incremental/`.
 - follow the directions in the `sqoop-incremental-jobs.txt` file to create the required incremental Metastore jobs.
-- using WinSCP or similar software, upload the `incremental-job.properties` file from the `/ETL/ETL_req_2-2-4_Oozie_incremental/` folder to your Linux VM's Document folder.
+- using WinSCP or similar software, upload the `incremental-job.properties` file from the `/ETL/ETL_req_2-2-4_Oozie_incremental/` folder to your Linux VM's Documents folder.
 - Login to Putty or HortonWorks Sandbox CLI as 'root', navigate to the Documents folder and run the following command to launch the process:
 `oozie job   -oozie  http://localhost:11000/oozie  -config  incremental-job.properties  -run`.
 
@@ -68,7 +69,6 @@ Download and extract all files (uncompress the downloaded zip folder) and import
 - in Ambari Hive View, run the queries and click the visualization icon to the right of the query window.
 ![visualization_example](/ETL/Visualizations_Explorations/snapshots/visualization_quarter.png)
 - click on the explorations tab at to top of the visualization window to further visualize and analyze the data.
-![visualization_example](/ETL/Visualizations_Explorations/snapshots/exploration_quarter_type.png)
 
 
 
