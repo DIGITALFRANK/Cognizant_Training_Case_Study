@@ -11,11 +11,13 @@ will execute with the following conditions:
 <!-- this frequency is what the documentation requires, personally I would coordinate this job every Month, at most every week -->
 
 
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
+
 <coordinator-app xmlns="uri:oozie:coordinator:0.2" name="credit_card_system_workflow_coordinator" frequency="0/20 8,17 * * MON-FRI" start="2018-09-06T08:00Z" end="2025-03-29T18:00Z" timezone="America/New_York">
-   <!-- set the frequency here to every month! -->
+
     <controls>
         <timeout>1</timeout>
-        <concurrency>1</concurrency>
+        <concurrency>2</concurrency>
         <execution>FIFO</execution>
         <throttle>1</throttle>
     </controls>
