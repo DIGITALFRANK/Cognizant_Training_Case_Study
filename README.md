@@ -39,6 +39,8 @@ Download and extract all files (uncompress the downloaded zip folder) and import
 - the `hive-table-partitioning.hql` file, located at `/ETL/ETL_req_2-2-2_Hive/hive-table-partitioning.hql`, contains instructions and hive scripts that load and transform data into partitioned Hive tables in the data warehouse.
 - From the Ambari GUI, select Hive view and run the scripts.  Once completed, the data will be in partitioned as ORC files in the Hive warehouse.
 
+![data_loading_example](/ETL/Visualizations_Explorations/snapshots/hive.png)
+
 
 
 ### 2.2.3 - PROCESS AUTOMATION MODULE - Apache Oozie
