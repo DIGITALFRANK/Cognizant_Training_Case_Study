@@ -13,6 +13,7 @@
 ### 2.1 - Operational Database (MySQL RDBMS)
 
 Download and extract all files (uncompress the downloaded zip folder) and import that entire folder into an IDE such as Eclipse that supports Java. Open the *CDW\_SAPP.sql* file in MySQL Workbench and run the entire file.  Be sure to match your database credentials with the credentials in the db.properties file located at */src/resources/db.properties*.  In your Integrated Development Environment, run the **_MainDriver.java_** class, which will start the program in your console.  In the IDE's console, you may use the application for Data Analysis as you wish and exit the application at any moment. (for file-writing capabilities, change the new file path inside */src/drivers/TransactionDriver.java* and inside */src/drivers/CustomerDriver.java*, to the path of your own desktop, weather you are running Windows or Mac)
+
 ![analysis_example](/ETL/Visualizations_Explorations/snapshots/java_console.png)
 
 
